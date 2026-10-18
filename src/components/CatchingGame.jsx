@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { sound } from '../utils/soundEngine';
-import { Icon, CHARACTER_HAIR } from './Artwork';
+import { Icon, CHARACTER_HAIR, CHARACTER_STYLE, GIRL_COLLAR } from './Artwork';
 import { GAME_CONFIG, TEXT_CONTENT, formatText } from '../gameConfig';
 
 const RULES = GAME_CONFIG.gameplay;
@@ -41,36 +41,36 @@ function drawHeart(ctx, x, y, size, color) {
   ctx.bezierCurveTo(15, -27, 30, -6, 0, 12); ctx.fill(); ctx.restore();
 }
 
-function drawHoodieCharacter(ctx, girl = false) {
-  const hoodie = girl ? '#93465a' : '#a6a9b1';
+function drawCharacter(ctx, girl = false) {
+  const top = girl ? CHARACTER_STYLE.girlTop : CHARACTER_STYLE.guyTop;
   ctx.save();
-  // Reuse the exact menu SVG paths so hairstyles stay identical in both renderers.
-  ctx.fillStyle = '#393840';
+  // Use the exact SVG silhouettes, collar and palette from the result artwork.
+  ctx.fillStyle = CHARACTER_STYLE.hair;
   if (girl) ctx.fill(new Path2D(CHARACTER_HAIR.girlBack));
-  fillRound(ctx, -20, 40, 16, 25, 7, '#777888');
-  fillRound(ctx, 4, 40, 16, 25, 7, '#777888');
-  fillRound(ctx, -27, 9, 54, 42, 19, hoodie);
-  ctx.strokeStyle = hoodie; ctx.lineWidth = 15; ctx.lineCap = 'round';
+  fillRound(ctx, -20, 40, 16, 25, 7, CHARACTER_STYLE.pants);
+  fillRound(ctx, 4, 40, 16, 25, 7, CHARACTER_STYLE.pants);
+  fillRound(ctx, -23, 59, 21, 10, 5, CHARACTER_STYLE.shoes);
+  fillRound(ctx, 2, 59, 21, 10, 5, CHARACTER_STYLE.shoes);
+  fillRound(ctx, -27, 9, 54, 42, 16, top);
+  ctx.strokeStyle = top; ctx.lineWidth = 15; ctx.lineCap = 'round';
   ctx.beginPath(); ctx.moveTo(-19, 22); ctx.lineTo(-30, 38); ctx.moveTo(19, 22); ctx.lineTo(30, 38); ctx.stroke();
   circle(ctx, 0, -14, 29, '#f2cfb8');
-  ctx.fillStyle = '#393840';
+  ctx.fillStyle = CHARACTER_STYLE.hair;
   ctx.fill(new Path2D(girl ? CHARACTER_HAIR.girlFront : CHARACTER_HAIR.boy));
-  if (girl) { ctx.strokeStyle = '#53505b'; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.stroke(new Path2D('M7-40Q-5-27-23-23')); }
-  ctx.fillStyle = '#e8a8a7';
+  ctx.fillStyle = CHARACTER_STYLE.blush;
   for (const x of [-17, 17]) { ctx.beginPath(); ctx.ellipse(x, -5, 6, 3.5, 0, 0, Math.PI * 2); ctx.fill(); }
   ctx.strokeStyle = '#745c59'; ctx.lineWidth = 2.5;
   ctx.beginPath(); ctx.moveTo(-12, -9); ctx.quadraticCurveTo(-8, -15, -4, -9);
   ctx.moveTo(5, -9); ctx.quadraticCurveTo(9, -15, 13, -9);
   ctx.moveTo(-4, 0); ctx.quadraticCurveTo(0, 5, 4, 0); ctx.stroke();
-  ctx.strokeStyle = '#eee4dc'; ctx.beginPath(); ctx.moveTo(-5, 21); ctx.lineTo(-5, 31); ctx.moveTo(5, 21); ctx.lineTo(5, 31); ctx.stroke();
-  fillRound(ctx, -12, 35, 24, 10, 5, girl ? '#854154' : '#9599a3');
+  if (girl) { ctx.fillStyle = CHARACTER_STYLE.collar; ctx.fill(new Path2D(GIRL_COLLAR)); }
   ctx.restore();
 }
 
 function drawItem(ctx, item) {
   ctx.save(); ctx.translate(item.x, item.y); ctx.rotate(item.angle || 0);
   const id = item.id;
-  if (id === 'girl') drawHoodieCharacter(ctx, true);
+  if (id === 'girl') drawCharacter(ctx, true);
   else if (id === 'heart') drawHeart(ctx, 0, 3, .9, item.color);
   else if (id === 'sunflower') {
     for (let i = 0; i < 10; i++) {
@@ -154,12 +154,15 @@ export default function CatchingGame({ level = 1, initialScore = 0, onGameEnd, o
   useEffect(() => {
     const canvas = canvasRef.current, ctx = canvas.getContext('2d');
     // Each remount starts a round, preserving only the parent's total and level.
-    // These multipliers affect speed, spawn frequency, and hazard probability.
-    const difficultyMultiplier = 1 + (level - 1) * RULES.speedStepPerLevel;
+    // Replay speed and spawn frequency compound independently: level 2 is
+    // 1.6x as fast and spawns 1.55x as often; level 3 is 2.56x / 2.40x.
+    // Hazard weights also rise, while the total score stays in the parent.
+    const difficultyMultiplier = RULES.speedMultiplierPerLevel ** (level - 1);
+    const spawnMultiplier = RULES.spawnMultiplierPerLevel ** (level - 1);
     const hazardMultiplier = 1 + (level - 1) * RULES.hazardStepPerLevel;
     const state = {
-      width: 0, height: 0, elapsed: 0, countdown: RULES.countdown, spawnTimer: .3,
-      score: initialScore, startingScore: initialScore, level, difficultyMultiplier, hazardMultiplier, lives: RULES.lives, combo: 1, active: true, finale: null, finaleTimer: 0,
+      width: 0, height: 0, elapsed: 0, countdown: RULES.countdown, spawnTimer: .3 / spawnMultiplier,
+      score: initialScore, startingScore: initialScore, level, difficultyMultiplier, spawnMultiplier, hazardMultiplier, lives: RULES.lives, combo: 1, active: true, finale: null, finaleTimer: 0,
       items: [], particles: [], bubbles: [], damage: 0, keys: { left: false, right: false },
       player: { x: 0, targetX: 0, y: 0 },
       stats: { sunflowers: 0, stars: 0, hearts: 0, sparkles: 0, maxCombo: 1 },
@@ -242,7 +245,7 @@ export default function CatchingGame({ level = 1, initialScore = 0, onGameEnd, o
           if (state.keys.left || state.keys.right) player.targetX += ((state.keys.right ? 1 : 0) - (state.keys.left ? 1 : 0)) * 460 * dt;
           player.targetX = Math.max(38, Math.min(state.width - 38, player.targetX));
           player.x += (player.targetX - player.x) * (1 - Math.exp(-16 * dt));
-          if (!state.finale) { state.spawnTimer -= dt; if (state.spawnTimer <= 0) { spawnItem(); state.spawnTimer = RULES.spawnInterval / difficultyMultiplier; } }
+          if (!state.finale) { state.spawnTimer -= dt; if (state.spawnTimer <= 0) { spawnItem(); state.spawnTimer = RULES.spawnInterval / spawnMultiplier; } }
           for (let i = state.items.length - 1; i >= 0; i--) {
             const item = state.items[i], previousY = item.y;
             item.y += item.speed * dt;
@@ -297,7 +300,7 @@ export default function CatchingGame({ level = 1, initialScore = 0, onGameEnd, o
       state.particles.forEach(p => { ctx.globalAlpha = p.life / .7; circle(ctx, p.x, p.y, 4, p.color); }); ctx.globalAlpha = 1;
       ctx.save(); ctx.translate(state.player.x, state.player.y);
       ctx.fillStyle = '#a0b18d35'; ctx.beginPath(); ctx.ellipse(0, 66, 40, 8, 0, 0, Math.PI * 2); ctx.fill();
-      drawHoodieCharacter(ctx);
+      drawCharacter(ctx);
       fillRound(ctx, -30, 27, 60, 24, 10, '#d2ae86');
       ctx.strokeStyle = '#e9c9a2'; ctx.lineWidth = 2;
       for (const y of [33, 41]) { ctx.beginPath(); ctx.moveTo(-25, y); ctx.lineTo(25, y); ctx.stroke(); }

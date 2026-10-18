@@ -44,6 +44,8 @@ const GAME_CONFIG = {
       envelopeLabel: 'JUST FOR YOU', paperPreview: 'Dearest lovely you,',
       paperNote: 'A little sunshine, just for you. ♡',
       footer: {
+        arriving: ['A little sunshine is growing…', 'A SPECIAL DELIVERY'],
+        zooming: ['A little love, coming closer.', 'YOUR LETTER IS ON ITS WAY'],
         tucked: ['A little something to make you smile.', 'TAP THE BOUQUET TO FIND YOUR LETTER'],
         launching: ['A special delivery…', 'WITH A LITTLE LOVE'],
         interactive: ['Some words, picked just for you.', 'TAP THE ENVELOPE TO OPEN'],
@@ -65,7 +67,7 @@ const GAME_CONFIG = {
       signoff: 'with a little love, always ♡',
     },
     game: {
-      canvasLabel: 'Catch sunshine with the grey-hoodie boy. Move with arrow keys, A and D, a mouse, or touch.',
+      canvasLabel: 'Catch sunshine with the boy in a plain grey top. Move with arrow keys, A and D, a mouse, or touch.',
       levelProgress: 'Level {level} · {points} / {target}',
       totalScore: 'Total sunshine: {score}', remaining: '{seconds}s to surprise',
       lastCatch: 'one last catch', lives: '{count} lives remaining',
@@ -79,7 +81,7 @@ const GAME_CONFIG = {
     },
     result: {
       winEyebrow: 'RIGHT WHERE YOU BELONG', loseEyebrow: 'EVEN FLOWERS NEED A LITTLE RAIN',
-      winArt: 'A bowl-haired boy in grey and a girl with side-parted wavy hair in dark red standing happily side-by-side beneath a heart',
+      winArt: 'A boy with solid black side-swept bangs in a grey top and a girl with wavy black hair in a charcoal sweater and white collar standing side-by-side beneath a heart',
       loseArt: 'A gentle rain cloud watering a little flower',
       winTitle: 'You Won!', loseTitle: 'A fresh start?',
       winCopy: 'I was falling in love…\nand you were there to catch me.',
@@ -92,11 +94,11 @@ const GAME_CONFIG = {
   },
   gameplay: {
     roundTarget: 500, finaleSeconds: 30, finalePause: 1.2, countdown: 3, lives: 3,
-    baseSpeed: 100, speedVariation: 50, speedPerSecond: 1.5,
-    speedStepPerLevel: .18, hazardStepPerLevel: .45, spawnInterval: .72,
+    baseSpeed: 260, speedVariation: 90, speedPerSecond: 2.5,
+    speedMultiplierPerLevel: 1.6, spawnMultiplierPerLevel: 1.55, hazardStepPerLevel: .7, spawnInterval: .5,
     girlSpeedBoost: 1.18, bubbleSeconds: 1.6, bubbleRise: 38, maxBubbles: 3,
   },
-  intro: { launchMs: 1400, paperRevealMs: 1700 },
+  intro: { bouquetArrivalMs: 900, bouquetZoomMs: 650, launchMs: 1400, paperRevealMs: 1700 },
 };
 
 const TEXT_CONTENT = GAME_CONFIG.text;
@@ -294,14 +296,21 @@ const sound = new SoundEngine();
 
 
 
-// Both SVG menus and Canvas sprites trace these exact silhouettes. A rounded,
-// nearly level fringe makes the guy's bowl cut distinct; the girl's asymmetric
-// swept fringe and scalloped back create a side part and shoulder-length waves.
+// SVG menus and Canvas sprites share the same hair silhouettes.
+// Uneven side-swept bangs for the boy; side-parted, medium waves for the girl.
+// Both are filled solid black, without highlights.
 const CHARACTER_HAIR = {
-  boy: 'M-30-11Q-33-48 0-48Q33-48 30-11L30-4Q25-1 22-9L22-17Q0-9-22-17L-22-9Q-25-1-30-4Z',
+  boy: 'M-30-9L-32-23L-28-26L-30-34L-22-34L-19-42L-13-40Q-2-52 7-45L15-48L17-43Q31-42 32-25L30-7L24-16L20-27Q12-18 2-14L5-23Q-6-11-18-9L-14-19L-25-11L-26-3Z',
   girlBack: 'M-29-22Q-40 0-32 14Q-41 31-25 43Q-19 48-13 40L19 43Q38 39 32 22Q43 6 31-9Q33-43 4-47Q-23-50-29-22Z',
   girlFront: 'M-29-11Q-37-47-2-49Q31-51 30-10L24-16Q13-22 7-37Q-2-18-29-11Z',
 };
+
+const CHARACTER_STYLE = {
+  hair: '#000000', guyTop: '#a6a9b1', girlTop: '#555661',
+  pants: '#222229', shoes: '#111111', collar: '#fffaf4', blush: '#e99598',
+};
+// These collar panels are clothing at the neck, never marks in either hairstyle.
+const GIRL_COLLAR = 'M-13 12L0 18L-7 27L-18 17ZM13 12L0 18L7 27L18 17Z';
 
 // Shared, outline-free artwork keeps the intro, HUD, and ending in one visual family.
 function Heart({ x = 0, y = 0, size = 1, color = '#dc8c9c' }) {
@@ -349,19 +358,18 @@ function Bouquet({ front = false }) {
 }
 
 function Character({ girl = false, x = 0, y = 0, size = 1 }) {
-  const hoodie = girl ? '#93465a' : '#a6a9b1';
+  const top = girl ? CHARACTER_STYLE.girlTop : CHARACTER_STYLE.guyTop;
   return <g transform={`translate(${x} ${y}) scale(${size})`}>
-    {girl && <path d={CHARACTER_HAIR.girlBack} fill="#393840"/>}
-    <rect x="-20" y="40" width="16" height="25" rx="7" fill="#777888"/><rect x="4" y="40" width="16" height="25" rx="7" fill="#777888"/>
-    <rect x="-27" y="9" width="54" height="42" rx="19" fill={hoodie}/>
-    <path d="M-19 22L-30 38M19 22L30 38" stroke={hoodie} strokeWidth="15" strokeLinecap="round"/>
+    {girl && <path d={CHARACTER_HAIR.girlBack} fill={CHARACTER_STYLE.hair}/>}
+    <rect x="-20" y="40" width="16" height="25" rx="7" fill={CHARACTER_STYLE.pants}/><rect x="4" y="40" width="16" height="25" rx="7" fill={CHARACTER_STYLE.pants}/>
+    <rect x="-23" y="59" width="21" height="10" rx="5" fill={CHARACTER_STYLE.shoes}/><rect x="2" y="59" width="21" height="10" rx="5" fill={CHARACTER_STYLE.shoes}/>
+    <rect x="-27" y="9" width="54" height="42" rx="16" fill={top}/>
+    <path d="M-19 22L-30 38M19 22L30 38" stroke={top} strokeWidth="15" strokeLinecap="round"/>
     <circle cy="-14" r="29" fill="#f2cfb8"/>
-    <path d={girl ? CHARACTER_HAIR.girlFront : CHARACTER_HAIR.boy} fill="#393840"/>
-    {girl && <path d="M7-40Q-5-27-23-23" fill="none" stroke="#53505b" strokeWidth="2" strokeLinecap="round"/>}
-    <ellipse cx="-17" cy="-5" rx="6" ry="3.5" fill="#e8a8a7"/><ellipse cx="17" cy="-5" rx="6" ry="3.5" fill="#e8a8a7"/>
+    <path d={girl ? CHARACTER_HAIR.girlFront : CHARACTER_HAIR.boy} fill={CHARACTER_STYLE.hair}/>
+    <ellipse cx="-17" cy="-5" rx="6" ry="3.5" fill={CHARACTER_STYLE.blush}/><ellipse cx="17" cy="-5" rx="6" ry="3.5" fill={CHARACTER_STYLE.blush}/>
     <path d="M-12-9q4-6 8 0M5-9q4-6 8 0M-4 0q4 5 8 0" fill="none" stroke="#745c59" strokeWidth="2.5" strokeLinecap="round"/>
-    <path d="M-5 21L-5 31M5 21L5 31" stroke="#eee4dc" strokeWidth="2.5" strokeLinecap="round"/>
-    <rect x="-12" y="35" width="24" height="10" rx="5" fill={girl ? '#854154' : '#9599a3'}/>
+    {girl && <path d={GIRL_COLLAR} fill={CHARACTER_STYLE.collar}/>}
   </g>;
 }
 
@@ -426,13 +434,13 @@ body{margin:0;color:#6d5a60;font-family:Quicksand,sans-serif;background:#f8f1e9}
 .bouquet-layer svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 14px 12px #9d7d5e12)}
 .bouquet-back{z-index:1}
 .bouquet-front{z-index:3}
-.envelope-track{position:absolute;z-index:2;left:calc(50% - 100px);top:0;width:200px;height:128px;transform:translateY(190px) rotate(-90deg)}
-.envelope-track[data-state="launching"]{animation:envelope-emerge 1.4s both cubic-bezier(.22,.61,.36,1)}
-.envelope-track[data-state="interactive"],.envelope-track[data-state="opening"],.envelope-track[data-state="opened"]{transform:translateY(0) rotate(0deg)}
-@keyframes envelope-emerge{0%{transform:translateY(190px) rotate(-90deg)}
-55%{transform:translateY(-80px) rotate(-90deg)}
-85%{transform:translateY(-32px) rotate(0deg)}
-100%{transform:translateY(0) rotate(0deg)}
+.envelope-track{opacity:0;visibility:hidden;position:absolute;z-index:2;left:calc(50% - 100px);top:0;width:200px;height:128px;transform:translateY(190px) rotate(-90deg)}
+.envelope-track[data-state="launching"]{visibility:visible;opacity:1;animation:envelope-emerge 1.4s both cubic-bezier(.22,.61,.36,1)}
+.envelope-track[data-state="interactive"],.envelope-track[data-state="opening"],.envelope-track[data-state="opened"]{visibility:visible;opacity:1;transform:translateY(0) rotate(0deg)}
+@keyframes envelope-emerge{0%,8%{opacity:0;transform:translateY(190px) rotate(-90deg)}
+55%{opacity:1;transform:translateY(-80px) rotate(-90deg)}
+85%{opacity:1;transform:translateY(-32px) rotate(0deg)}
+100%{opacity:1;transform:translateY(0) rotate(0deg)}
 }
 .soft-envelope{position:relative;display:block;width:200px;height:128px;padding:0;border:0;border-radius:18px;background:#fff3d9;box-shadow:0 12px 25px #9d7d5e22;cursor:pointer;perspective:600px}
 .soft-envelope:disabled{cursor:default}
@@ -520,40 +528,58 @@ body{margin:0;color:#6d5a60;font-family:Quicksand,sans-serif;background:#f8f1e9}
 /* Envelope sandwich: back (0), actual moving paper (1), pocket (2), lid (3).
    The pocket masks the lowered sheet until it rises above the envelope opening. */
 .envelope-track[data-state="opening"]{z-index:4}
-.soft-envelope{isolation:isolate;overflow:visible}
+.soft-envelope{isolation:isolate;overflow:hidden}
+.is-opening{overflow:visible}
 .envelope-back,.envelope-front,.envelope-lid{position:absolute;inset:0;pointer-events:none}
 .envelope-back{z-index:0;background:#f0dabb;border-radius:18px}
 .envelope-front{z-index:2}
 .envelope-front svg{filter:drop-shadow(0 -2px 2px #b1906b10)}
 .envelope-lid{z-index:3;transform-origin:center top}
-.envelope-paper{position:absolute;z-index:1;left:14px;top:8px;width:172px;height:108px;padding:14px 12px;background:#fffbf3;border-radius:12px;box-shadow:0 4px 12px #ac8a6c20;transform:translateY(24px);clip-path:inset(0 0 20px 0);display:flex;flex-direction:column;justify-content:center;gap:8px;color:#aa6f7f;pointer-events:none}
+.envelope-paper{visibility:hidden;opacity:0;position:absolute;z-index:1;left:28px;top:18px;width:144px;height:86px;padding:14px 12px;background:#fffbf3;border-radius:12px;box-shadow:0 4px 12px #ac8a6c20;transform:translateY(12px) scale(.85);clip-path:inset(0 0 16px 0);display:flex;flex-direction:column;justify-content:center;gap:8px;color:#aa6f7f;pointer-events:none}
 .envelope-paper strong{font:600 18px Caveat,cursive}
 .envelope-paper span{font:10px/1.5 Quicksand,sans-serif}
 .envelope-label{z-index:3;pointer-events:none}
 .is-opening .envelope-lid{animation:lid-open var(--paper-reveal) forwards}
-.is-opening .envelope-paper{animation:paper-reveal var(--paper-reveal) cubic-bezier(.22,.61,.36,1) forwards}
+.is-opening .envelope-paper{visibility:visible;animation:paper-reveal var(--paper-reveal) cubic-bezier(.22,.61,.36,1) forwards}
 @keyframes lid-open{0%{transform:rotateX(0);opacity:1}18%,100%{transform:rotateX(180deg);opacity:0}}
-@keyframes paper-reveal{0%,18%{transform:translateY(24px) scale(1);clip-path:inset(0 0 20px 0)}30%{transform:translateY(-12px) scale(1);clip-path:inset(0)}70%{transform:translateY(-124px) scale(1);clip-path:inset(0)}100%{transform:translateY(-142px) scale(1.5);clip-path:inset(0)}}
+@keyframes paper-reveal{0%,18%{opacity:0;transform:translateY(12px) scale(.85);clip-path:inset(0 0 16px 0)}30%{opacity:1;transform:translateY(-12px) scale(.85);clip-path:inset(0)}70%{opacity:1;transform:translateY(-112px) scale(1);clip-path:inset(0)}100%{opacity:1;transform:translateY(-142px) scale(1.5);clip-path:inset(0)}}
 .designed-letter .letter-script,.result-copy{white-space:pre-line}
 .designed-letter{transform-origin:center bottom}
 @keyframes letter-reveal{from{opacity:.3;transform:translateY(24px) scale(.82)}to{opacity:1;transform:none}}
 /* Make content editable even when a replacement message is longer than expected. */
 .envelope-paper span,.envelope-paper strong{overflow-wrap:anywhere}
+/* HTML hidden and CSS visibility both gate the envelope before the zoom ends.
+   This remains correct even before animations initialize or fonts finish loading. */
+.envelope-track[hidden]{display:none}
+.bouquet-layer{transform-origin:50% 80%}
+.intro-stack[data-state="arriving"] .bouquet-layer{animation:bouquet-arrive var(--bouquet-arrival) both cubic-bezier(.2,.7,.3,1)}
+.intro-stack[data-state="zooming"] .bouquet-layer{animation:bouquet-zoom var(--bouquet-zoom) both cubic-bezier(.2,.7,.3,1)}
+.intro-stack[data-state="launching"] .bouquet-layer,.intro-stack[data-state="interactive"] .bouquet-layer,.intro-stack[data-state="opening"] .bouquet-layer,.intro-stack[data-state="opened"] .bouquet-layer{transform:translateY(-18px) scale(1.08)}
+@keyframes bouquet-arrive{from{opacity:0;transform:translateY(65px) scale(.78)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes bouquet-zoom{from{transform:translateY(0) scale(1)}to{transform:translateY(-18px) scale(1.08)}}
 `;
 
-// Intro state machine: tucked -> launching -> interactive -> opening -> opened.
+// Intro state machine: arriving -> tucked -> zooming -> launching -> interactive
+// -> opening -> opened. The envelope is removed from layout (hidden) until
+// the bouquet finishes its zoom, so no initial flash can expose it.
 // Closing the modal returns to interactive, without replaying the bouquet launch.
 function IntroScreen({ onStartGame, soundMuted, onToggleSound }) {
-  const [envelopeState, setEnvelopeState] = useState('tucked');
+  const [envelopeState, setEnvelopeState] = useState('arriving');
   const envelopeRef = useRef(null);
   const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   useEffect(() => {
     if (envelopeState === 'interactive') envelopeRef.current?.focus({ preventScroll: true });
     // animationend drives normal transitions. Timers also recover if a browser
     // cancels an animation or reduced-motion settings change while it is running.
-    if (!['launching', 'opening'].includes(envelopeState)) return;
-    const next = envelopeState === 'launching' ? 'interactive' : 'opened';
-    const duration = envelopeState === 'launching' ? GAME_CONFIG.intro.launchMs : GAME_CONFIG.intro.paperRevealMs;
+    const transitions = {
+      arriving: ['tucked', GAME_CONFIG.intro.bouquetArrivalMs],
+      zooming: ['launching', GAME_CONFIG.intro.bouquetZoomMs],
+      launching: ['interactive', GAME_CONFIG.intro.launchMs],
+      opening: ['opened', GAME_CONFIG.intro.paperRevealMs],
+    };
+    if (!transitions[envelopeState]) return;
+    const [next, duration] = transitions[envelopeState];
+
     const timer = setTimeout(() => setEnvelopeState(next), reducedMotion() ? 0 : duration + 100);
     return () => clearTimeout(timer);
   }, [envelopeState]);
@@ -562,23 +588,27 @@ function IntroScreen({ onStartGame, soundMuted, onToggleSound }) {
   return <div className="intro-scene">
     <p className="intro-heading eyebrow">{TEXT_CONTENT.intro.eyebrow}</p>
     <button className="intro-sound icon-button" onClick={onToggleSound} aria-label={soundMuted ? TEXT_CONTENT.controls.unmute : TEXT_CONTENT.controls.mute}><Icon name={soundMuted ? 'muted' : 'sound'}/></button>
-    <div className="intro-stack">
+    <div className="intro-stack" data-state={envelopeState} style={{ '--bouquet-arrival': `${GAME_CONFIG.intro.bouquetArrivalMs}ms`, '--bouquet-zoom': `${GAME_CONFIG.intro.bouquetZoomMs}ms` }}>
       <h1 className="intro-title">{TEXT_CONTENT.intro.title}</h1>
       <div className="bouquet-layer bouquet-back"><Bouquet/></div>
-      <div className="envelope-track" data-state={envelopeState} style={{ '--paper-reveal': `${GAME_CONFIG.intro.paperRevealMs}ms`, animationDuration: envelopeState === 'launching' ? `${GAME_CONFIG.intro.launchMs}ms` : undefined }} onAnimationEnd={e => {
+      <div className="envelope-track" data-state={envelopeState} hidden={!['launching', 'interactive', 'opening', 'opened'].includes(envelopeState)} style={{ '--paper-reveal': `${GAME_CONFIG.intro.paperRevealMs}ms`, animationDuration: envelopeState === 'launching' ? `${GAME_CONFIG.intro.launchMs}ms` : undefined }} onAnimationEnd={e => {
         if (envelopeState === 'launching' && e.animationName === 'envelope-emerge') setEnvelopeState('interactive');
         if (envelopeState === 'opening' && e.animationName === 'paper-reveal') setEnvelopeState('opened');
       }}>
         <button ref={envelopeRef} type="button" className={`soft-envelope ${envelopeState === 'interactive' ? 'is-ready' : ''} ${envelopeState === 'opening' ? 'is-opening' : ''}`} disabled={envelopeState !== 'interactive'} aria-label={TEXT_CONTENT.controls.openLetter} onClick={() => { sound.playEnvelopeOpen(); setEnvelopeState('opening'); }}>
           <span className="envelope-back" aria-hidden="true"/>
           <span className="envelope-paper" aria-hidden="true"><strong>{TEXT_CONTENT.intro.paperPreview}</strong><span>{TEXT_CONTENT.intro.paperNote}</span></span>
-          <span className="envelope-front" aria-hidden="true"><svg viewBox="0 0 200 128"><path d="M0 40L87 91Q100 98 113 91L200 40V110Q200 128 182 128H18Q0 128 0 110Z" fill="#fff1d6"/><path d="M0 119L83 66Q100 54 117 66L200 119Q200 128 182 128H18Q0 128 0 119Z" fill="#f3dfbd"/></svg></span>
+          <span className="envelope-front" aria-hidden="true"><svg viewBox="0 0 200 128"><path d="M0 12L87 74Q100 85 113 74L200 12V110Q200 128 182 128H18Q0 128 0 110Z" fill="#fff1d6"/><path d="M0 119L83 66Q100 54 117 66L200 119Q200 128 182 128H18Q0 128 0 119Z" fill="#f3dfbd"/></svg></span>
           <span className="envelope-lid" aria-hidden="true"><svg viewBox="0 0 200 128"><path d="M0 9Q0 0 18 0H182Q200 0 200 9L112 73Q100 82 88 73Z" fill="#fff7e5"/><circle cx="100" cy="74" r="17" fill="#dda0a5"/><Heart x={100} y={77} size={.48} color="#fff3e2"/></svg></span>
           <span className="envelope-label">{TEXT_CONTENT.intro.envelopeLabel}</span>
         </button>
       </div>
-      <div className="bouquet-layer bouquet-front"><Bouquet front/></div>
-      {envelopeState === 'tucked' && <button className="bouquet-trigger" aria-label={TEXT_CONTENT.controls.liftLetter} onClick={() => { sound.init(); sound.playCatch(1); setEnvelopeState(reducedMotion() ? 'interactive' : 'launching'); }}>{TEXT_CONTENT.controls.liftLetter}</button>}
+      <div className="bouquet-layer bouquet-front" onAnimationEnd={e => {
+        // Only the front layer advances the state; the back plays in sync.
+        if (envelopeState === 'arriving' && e.animationName === 'bouquet-arrive') setEnvelopeState('tucked');
+        if (envelopeState === 'zooming' && e.animationName === 'bouquet-zoom') setEnvelopeState('launching');
+      }}><Bouquet front/></div>
+      {envelopeState === 'tucked' && <button className="bouquet-trigger" aria-label={TEXT_CONTENT.controls.liftLetter} onClick={() => { sound.init(); sound.playCatch(1); setEnvelopeState('zooming'); }}>{TEXT_CONTENT.controls.liftLetter}</button>}
     </div>
     <div className="intro-footer" aria-live="polite"><strong>{footer[0]}</strong><small>{footer[1]}</small></div>
     {envelopeState === 'opened' && <OpenLetterModal onStartGame={onStartGame} onClose={closeLetter}/>}
@@ -625,36 +655,36 @@ function drawHeart(ctx, x, y, size, color) {
   ctx.bezierCurveTo(15, -27, 30, -6, 0, 12); ctx.fill(); ctx.restore();
 }
 
-function drawHoodieCharacter(ctx, girl = false) {
-  const hoodie = girl ? '#93465a' : '#a6a9b1';
+function drawCharacter(ctx, girl = false) {
+  const top = girl ? CHARACTER_STYLE.girlTop : CHARACTER_STYLE.guyTop;
   ctx.save();
-  // Reuse the exact menu SVG paths so hairstyles stay identical in both renderers.
-  ctx.fillStyle = '#393840';
+  // Use the exact SVG silhouettes, collar and palette from the result artwork.
+  ctx.fillStyle = CHARACTER_STYLE.hair;
   if (girl) ctx.fill(new Path2D(CHARACTER_HAIR.girlBack));
-  fillRound(ctx, -20, 40, 16, 25, 7, '#777888');
-  fillRound(ctx, 4, 40, 16, 25, 7, '#777888');
-  fillRound(ctx, -27, 9, 54, 42, 19, hoodie);
-  ctx.strokeStyle = hoodie; ctx.lineWidth = 15; ctx.lineCap = 'round';
+  fillRound(ctx, -20, 40, 16, 25, 7, CHARACTER_STYLE.pants);
+  fillRound(ctx, 4, 40, 16, 25, 7, CHARACTER_STYLE.pants);
+  fillRound(ctx, -23, 59, 21, 10, 5, CHARACTER_STYLE.shoes);
+  fillRound(ctx, 2, 59, 21, 10, 5, CHARACTER_STYLE.shoes);
+  fillRound(ctx, -27, 9, 54, 42, 16, top);
+  ctx.strokeStyle = top; ctx.lineWidth = 15; ctx.lineCap = 'round';
   ctx.beginPath(); ctx.moveTo(-19, 22); ctx.lineTo(-30, 38); ctx.moveTo(19, 22); ctx.lineTo(30, 38); ctx.stroke();
   circle(ctx, 0, -14, 29, '#f2cfb8');
-  ctx.fillStyle = '#393840';
+  ctx.fillStyle = CHARACTER_STYLE.hair;
   ctx.fill(new Path2D(girl ? CHARACTER_HAIR.girlFront : CHARACTER_HAIR.boy));
-  if (girl) { ctx.strokeStyle = '#53505b'; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.stroke(new Path2D('M7-40Q-5-27-23-23')); }
-  ctx.fillStyle = '#e8a8a7';
+  ctx.fillStyle = CHARACTER_STYLE.blush;
   for (const x of [-17, 17]) { ctx.beginPath(); ctx.ellipse(x, -5, 6, 3.5, 0, 0, Math.PI * 2); ctx.fill(); }
   ctx.strokeStyle = '#745c59'; ctx.lineWidth = 2.5;
   ctx.beginPath(); ctx.moveTo(-12, -9); ctx.quadraticCurveTo(-8, -15, -4, -9);
   ctx.moveTo(5, -9); ctx.quadraticCurveTo(9, -15, 13, -9);
   ctx.moveTo(-4, 0); ctx.quadraticCurveTo(0, 5, 4, 0); ctx.stroke();
-  ctx.strokeStyle = '#eee4dc'; ctx.beginPath(); ctx.moveTo(-5, 21); ctx.lineTo(-5, 31); ctx.moveTo(5, 21); ctx.lineTo(5, 31); ctx.stroke();
-  fillRound(ctx, -12, 35, 24, 10, 5, girl ? '#854154' : '#9599a3');
+  if (girl) { ctx.fillStyle = CHARACTER_STYLE.collar; ctx.fill(new Path2D(GIRL_COLLAR)); }
   ctx.restore();
 }
 
 function drawItem(ctx, item) {
   ctx.save(); ctx.translate(item.x, item.y); ctx.rotate(item.angle || 0);
   const id = item.id;
-  if (id === 'girl') drawHoodieCharacter(ctx, true);
+  if (id === 'girl') drawCharacter(ctx, true);
   else if (id === 'heart') drawHeart(ctx, 0, 3, .9, item.color);
   else if (id === 'sunflower') {
     for (let i = 0; i < 10; i++) {
@@ -738,12 +768,15 @@ function CatchingGame({ level = 1, initialScore = 0, onGameEnd, onBackToIntro, s
   useEffect(() => {
     const canvas = canvasRef.current, ctx = canvas.getContext('2d');
     // Each remount starts a round, preserving only the parent's total and level.
-    // These multipliers affect speed, spawn frequency, and hazard probability.
-    const difficultyMultiplier = 1 + (level - 1) * RULES.speedStepPerLevel;
+    // Replay speed and spawn frequency compound independently: level 2 is
+    // 1.6x as fast and spawns 1.55x as often; level 3 is 2.56x / 2.40x.
+    // Hazard weights also rise, while the total score stays in the parent.
+    const difficultyMultiplier = RULES.speedMultiplierPerLevel ** (level - 1);
+    const spawnMultiplier = RULES.spawnMultiplierPerLevel ** (level - 1);
     const hazardMultiplier = 1 + (level - 1) * RULES.hazardStepPerLevel;
     const state = {
-      width: 0, height: 0, elapsed: 0, countdown: RULES.countdown, spawnTimer: .3,
-      score: initialScore, startingScore: initialScore, level, difficultyMultiplier, hazardMultiplier, lives: RULES.lives, combo: 1, active: true, finale: null, finaleTimer: 0,
+      width: 0, height: 0, elapsed: 0, countdown: RULES.countdown, spawnTimer: .3 / spawnMultiplier,
+      score: initialScore, startingScore: initialScore, level, difficultyMultiplier, spawnMultiplier, hazardMultiplier, lives: RULES.lives, combo: 1, active: true, finale: null, finaleTimer: 0,
       items: [], particles: [], bubbles: [], damage: 0, keys: { left: false, right: false },
       player: { x: 0, targetX: 0, y: 0 },
       stats: { sunflowers: 0, stars: 0, hearts: 0, sparkles: 0, maxCombo: 1 },
@@ -826,7 +859,7 @@ function CatchingGame({ level = 1, initialScore = 0, onGameEnd, onBackToIntro, s
           if (state.keys.left || state.keys.right) player.targetX += ((state.keys.right ? 1 : 0) - (state.keys.left ? 1 : 0)) * 460 * dt;
           player.targetX = Math.max(38, Math.min(state.width - 38, player.targetX));
           player.x += (player.targetX - player.x) * (1 - Math.exp(-16 * dt));
-          if (!state.finale) { state.spawnTimer -= dt; if (state.spawnTimer <= 0) { spawnItem(); state.spawnTimer = RULES.spawnInterval / difficultyMultiplier; } }
+          if (!state.finale) { state.spawnTimer -= dt; if (state.spawnTimer <= 0) { spawnItem(); state.spawnTimer = RULES.spawnInterval / spawnMultiplier; } }
           for (let i = state.items.length - 1; i >= 0; i--) {
             const item = state.items[i], previousY = item.y;
             item.y += item.speed * dt;
@@ -881,7 +914,7 @@ function CatchingGame({ level = 1, initialScore = 0, onGameEnd, onBackToIntro, s
       state.particles.forEach(p => { ctx.globalAlpha = p.life / .7; circle(ctx, p.x, p.y, 4, p.color); }); ctx.globalAlpha = 1;
       ctx.save(); ctx.translate(state.player.x, state.player.y);
       ctx.fillStyle = '#a0b18d35'; ctx.beginPath(); ctx.ellipse(0, 66, 40, 8, 0, 0, Math.PI * 2); ctx.fill();
-      drawHoodieCharacter(ctx);
+      drawCharacter(ctx);
       fillRound(ctx, -30, 27, 60, 24, 10, '#d2ae86');
       ctx.strokeStyle = '#e9c9a2'; ctx.lineWidth = 2;
       for (const y of [33, 41]) { ctx.beginPath(); ctx.moveTo(-25, y); ctx.lineTo(25, y); ctx.stroke(); }

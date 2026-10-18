@@ -69,9 +69,17 @@ test('actual App handlers preserve scores and advance levels through win, loss, 
 });
 test('letter waits for the paper slide and scale before revealing the readable modal', () => {
   const app = mount('IntroScreen');
+assert.equal(track(app).props['data-state'], 'arriving');
+  assert.equal(track(app).props.hidden, true);
+  find(app, node => node.props.className === 'bouquet-layer bouquet-front').props.onAnimationEnd({ animationName: 'bouquet-arrive' }); app.render();
   assert.equal(track(app).props['data-state'], 'tucked');
+  assert.equal(track(app).props.hidden, true);
   find(app, node => node.props.className === 'bouquet-trigger').props.onClick(); app.render();
+assert.equal(track(app).props['data-state'], 'zooming');
+  assert.equal(track(app).props.hidden, true);
+  find(app, node => node.props.className === 'bouquet-layer bouquet-front').props.onAnimationEnd({ animationName: 'bouquet-zoom' }); app.render();
   assert.equal(track(app).props['data-state'], 'launching');
+  assert.equal(track(app).props.hidden, false);
   track(app).props.onAnimationEnd({ animationName: 'envelope-emerge' }); app.render();
   find(app, node => node.props['aria-label'] === 'Open your letter').props.onClick(); app.render();
   assert.equal(track(app).props['data-state'], 'opening'); assert.equal(component(app, 'OpenLetterModal'), undefined);
@@ -88,8 +96,11 @@ test('letter waits for the paper slide and scale before revealing the readable m
 test('reduced-motion and cancelled animations still complete the intro without stale timers', () => {
   for (const reduced of [false, true]) {
     const app = mount('IntroScreen', {}, reduced);
+    app.fireTimers(); app.render(); // Arrival completes, including reduced motion.
     find(app, node => node.props.className === 'bouquet-trigger').props.onClick(); app.render();
-    if (!reduced) { app.fireTimers(); app.render(); }
+    app.fireTimers(); app.render(); // Zoom completes before the envelope appears.
+    assert.equal(track(app).props.hidden, false);
+    app.fireTimers(); app.render(); // Launch completes before the letter can open.
     assert.equal(track(app).props['data-state'], 'interactive');
     find(app, node => node.props['aria-label'] === 'Open your letter').props.onClick(); app.render();
     assert.equal([...app.timers.values()][0].ms, reduced ? 0 : 1800);
@@ -117,4 +128,33 @@ test('all visible JSX text and accessibility copy are centralized', () => {
   const gameAst = compiler.Babel.transform(fs.readFileSync(path.join(root, 'src/components/CatchingGame.jsx'), 'utf8'), { presets: [['react', { runtime: 'classic' }]], ast: true }).ast;
   visit(gameAst);
 });
+test('paper is concealed and clipped while the envelope is closed', () => {
+  const app = mount('IntroScreen');
+  const css = vm.runInContext('introStyles', app.sandbox);
+  const paper = css.match(/\.envelope-paper\{([^}]+)\}/)[1];
+  assert.ok(paper.includes('visibility:hidden')); assert.ok(paper.includes('opacity:0'));
+  assert.ok(paper.includes('scale(.85)'));
+  assert.ok(css.includes('.soft-envelope{isolation:isolate;overflow:hidden}'));
+  assert.ok(css.includes('.is-opening{overflow:visible}'));
+  assert.ok(css.includes('.envelope-track[hidden]{display:none}')); app.cleanup();
+});
+test('both sprites have solid black hair, dark trousers/shoes, and distinct tops', () => {
+  for (const girl of [false, true]) {
+    const app = mount('Character', { girl });
+    const hair = vm.runInContext('CHARACTER_HAIR', app.sandbox);
+    const paths = nodes(app.tree).filter(node => node.type === 'path');
+    const hairPaths = paths.filter(node => Object.values(hair).includes(node.props.d));
+    assert.equal(hairPaths.length, girl ? 2 : 1);
+    hairPaths.forEach(node => { assert.equal(node.props.fill, '#000000'); assert.equal(node.props.stroke, undefined); });
+    const collar = paths.find(node => node.props.d === vm.runInContext('GIRL_COLLAR', app.sandbox));
+    assert.equal(Boolean(collar), girl);
+    if (girl) assert.equal(collar.props.fill, '#fffaf4');
+    const rectangles = nodes(app.tree).filter(node => node.type === 'rect');
+    assert.equal(rectangles.filter(node => node.props.fill === '#222229').length, 2);
+    assert.equal(rectangles.filter(node => node.props.fill === '#111111').length, 2);
+    assert.ok(rectangles.some(node => node.props.fill === (girl ? '#555661' : '#a6a9b1')));
+    app.cleanup();
+  }
+});
+
 console.log(`${tests.length} interface checks passed:\n${tests.map(name => `- ${name}`).join('\n')}`);

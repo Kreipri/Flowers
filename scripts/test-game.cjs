@@ -35,7 +35,7 @@ function mount({ width = 800, height = 700, storageBlocked = false, level = 1, i
   cleanup = effects[0]();
   const frame = dt => { now += dt * 1000; const fn = nextFrame; nextFrame = null; if (fn) fn(now); };
   frame(0);
-  return { state: refs[1].current, frame, advance(seconds, hz = 60) { for (let i = 0; i < Math.ceil(seconds * hz); i++) frame(1 / hz); }, get result() { return result; }, tree, refs, renders, listeners, cleanup };
+  return { state: refs[1].current, rules: vm.runInContext('RULES', sandbox), frame, advance(seconds, hz = 60) { for (let i = 0; i < Math.ceil(seconds * hz); i++) frame(1 / hz); }, get result() { return result; }, tree, refs, renders, listeners, cleanup };
 }
 
 const tests = [];
@@ -138,16 +138,29 @@ test('later levels spawn items faster, increase speed, and increase hazard proba
 });
 test('girl falls faster than the maximum ordinary item speed at every difficulty', () => {
   for (const level of [1, 2, 5]) {
-    const g = mount({ level }); g.state.countdown = 0; g.state.elapsed = 29.99; g.advance(1.4);
-    const ordinaryMax = (100 + 50 + 30 * 1.5) * g.state.difficultyMultiplier;
+    const g = mount({ level }); g.state.countdown = 0; g.state.elapsed = 29.99; g.frame(.02);
+    g.state.finaleTimer = g.rules.finalePause; g.frame(.016);
+    const ordinaryMax = (g.rules.baseSpeed + g.rules.speedVariation + g.rules.finaleSeconds * g.rules.speedPerSecond) * g.state.difficultyMultiplier;
     assert.ok(g.state.items[0].speed > ordinaryMax);
     assert.ok(Math.abs(g.state.items[0].speed / ordinaryMax - 1.18) < .001); g.cleanup();
   }
 });
 test('swept collision catches a fast item that crosses the entire basket in one frame', () => {
-  const g = mount({ level: 8 }); g.state.countdown = 0;
+  const g = mount({ level: 8 }); g.state.countdown = 0; g.state.spawnTimer = 100;
   g.state.items = [{ ...positive(g.state), y: g.state.player.y - 100, speed: 6000 }];
   g.frame(.05); assert.equal(g.state.score, 15); assert.equal(g.state.items.length, 0); g.cleanup();
+});
+
+test('level 1 starts fast and each replay drastically tightens the pace', () => {
+  const games = [1, 2, 3].map(level => mount({ level }));
+  games.forEach(g => { g.state.countdown = 0; g.state.spawnTimer = 0; g.frame(.016); });
+  assert.ok(games[0].state.items[0].speed >= 260);
+  assert.ok(games[0].state.spawnTimer <= .5);
+  for (let i = 1; i < games.length; i++) {
+    assert.ok(games[i].state.items[0].speed / games[i - 1].state.items[0].speed >= 1.59);
+    assert.ok(games[i].state.spawnTimer / games[i - 1].state.spawnTimer < .65);
+  }
+  games.forEach(g => g.cleanup());
 });
 
 console.log(`${tests.length} game checks passed:\n${tests.map(name => `- ${name}`).join('\n')}`);

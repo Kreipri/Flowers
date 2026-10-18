@@ -1,13 +1,20 @@
 import React from 'react';
 
-// Both SVG menus and Canvas sprites trace these exact silhouettes. A rounded,
-// nearly level fringe makes the guy's bowl cut distinct; the girl's asymmetric
-// swept fringe and scalloped back create a side part and shoulder-length waves.
+// SVG menus and Canvas sprites share the same hair silhouettes.
+// Uneven side-swept bangs for the boy; side-parted, medium waves for the girl.
+// Both are filled solid black, without highlights.
 export const CHARACTER_HAIR = {
-  boy: 'M-30-11Q-33-48 0-48Q33-48 30-11L30-4Q25-1 22-9L22-17Q0-9-22-17L-22-9Q-25-1-30-4Z',
+  boy: 'M-30-9L-32-23L-28-26L-30-34L-22-34L-19-42L-13-40Q-2-52 7-45L15-48L17-43Q31-42 32-25L30-7L24-16L20-27Q12-18 2-14L5-23Q-6-11-18-9L-14-19L-25-11L-26-3Z',
   girlBack: 'M-29-22Q-40 0-32 14Q-41 31-25 43Q-19 48-13 40L19 43Q38 39 32 22Q43 6 31-9Q33-43 4-47Q-23-50-29-22Z',
   girlFront: 'M-29-11Q-37-47-2-49Q31-51 30-10L24-16Q13-22 7-37Q-2-18-29-11Z',
 };
+
+export const CHARACTER_STYLE = {
+  hair: '#000000', guyTop: '#a6a9b1', girlTop: '#555661',
+  pants: '#222229', shoes: '#111111', collar: '#fffaf4', blush: '#e99598',
+};
+// These collar panels are clothing at the neck, never marks in either hairstyle.
+export const GIRL_COLLAR = 'M-13 12L0 18L-7 27L-18 17ZM13 12L0 18L7 27L18 17Z';
 
 // Shared, outline-free artwork keeps the intro, HUD, and ending in one visual family.
 export function Heart({ x = 0, y = 0, size = 1, color = '#dc8c9c' }) {
@@ -55,19 +62,18 @@ export function Bouquet({ front = false }) {
 }
 
 export function Character({ girl = false, x = 0, y = 0, size = 1 }) {
-  const hoodie = girl ? '#93465a' : '#a6a9b1';
+  const top = girl ? CHARACTER_STYLE.girlTop : CHARACTER_STYLE.guyTop;
   return <g transform={`translate(${x} ${y}) scale(${size})`}>
-    {girl && <path d={CHARACTER_HAIR.girlBack} fill="#393840"/>}
-    <rect x="-20" y="40" width="16" height="25" rx="7" fill="#777888"/><rect x="4" y="40" width="16" height="25" rx="7" fill="#777888"/>
-    <rect x="-27" y="9" width="54" height="42" rx="19" fill={hoodie}/>
-    <path d="M-19 22L-30 38M19 22L30 38" stroke={hoodie} strokeWidth="15" strokeLinecap="round"/>
+    {girl && <path d={CHARACTER_HAIR.girlBack} fill={CHARACTER_STYLE.hair}/>}
+    <rect x="-20" y="40" width="16" height="25" rx="7" fill={CHARACTER_STYLE.pants}/><rect x="4" y="40" width="16" height="25" rx="7" fill={CHARACTER_STYLE.pants}/>
+    <rect x="-23" y="59" width="21" height="10" rx="5" fill={CHARACTER_STYLE.shoes}/><rect x="2" y="59" width="21" height="10" rx="5" fill={CHARACTER_STYLE.shoes}/>
+    <rect x="-27" y="9" width="54" height="42" rx="16" fill={top}/>
+    <path d="M-19 22L-30 38M19 22L30 38" stroke={top} strokeWidth="15" strokeLinecap="round"/>
     <circle cy="-14" r="29" fill="#f2cfb8"/>
-    <path d={girl ? CHARACTER_HAIR.girlFront : CHARACTER_HAIR.boy} fill="#393840"/>
-    {girl && <path d="M7-40Q-5-27-23-23" fill="none" stroke="#53505b" strokeWidth="2" strokeLinecap="round"/>}
-    <ellipse cx="-17" cy="-5" rx="6" ry="3.5" fill="#e8a8a7"/><ellipse cx="17" cy="-5" rx="6" ry="3.5" fill="#e8a8a7"/>
+    <path d={girl ? CHARACTER_HAIR.girlFront : CHARACTER_HAIR.boy} fill={CHARACTER_STYLE.hair}/>
+    <ellipse cx="-17" cy="-5" rx="6" ry="3.5" fill={CHARACTER_STYLE.blush}/><ellipse cx="17" cy="-5" rx="6" ry="3.5" fill={CHARACTER_STYLE.blush}/>
     <path d="M-12-9q4-6 8 0M5-9q4-6 8 0M-4 0q4 5 8 0" fill="none" stroke="#745c59" strokeWidth="2.5" strokeLinecap="round"/>
-    <path d="M-5 21L-5 31M5 21L5 31" stroke="#eee4dc" strokeWidth="2.5" strokeLinecap="round"/>
-    <rect x="-12" y="35" width="24" height="10" rx="5" fill={girl ? '#854154' : '#9599a3'}/>
+    {girl && <path d={GIRL_COLLAR} fill={CHARACTER_STYLE.collar}/>}
   </g>;
 }
 

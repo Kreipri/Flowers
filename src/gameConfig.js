@@ -14,6 +14,8 @@ export const GAME_CONFIG = {
       envelopeLabel: 'JUST FOR YOU', paperPreview: 'Dearest lovely you,',
       paperNote: 'A little sunshine, just for you. ♡',
       footer: {
+        arriving: ['A little sunshine is growing…', 'A SPECIAL DELIVERY'],
+        zooming: ['A little love, coming closer.', 'YOUR LETTER IS ON ITS WAY'],
         tucked: ['A little something to make you smile.', 'TAP THE BOUQUET TO FIND YOUR LETTER'],
         launching: ['A special delivery…', 'WITH A LITTLE LOVE'],
         interactive: ['Some words, picked just for you.', 'TAP THE ENVELOPE TO OPEN'],
@@ -35,7 +37,7 @@ export const GAME_CONFIG = {
       signoff: 'with a little love, always ♡',
     },
     game: {
-      canvasLabel: 'Catch sunshine with the grey-hoodie boy. Move with arrow keys, A and D, a mouse, or touch.',
+      canvasLabel: 'Catch sunshine with the boy in a plain grey top. Move with arrow keys, A and D, a mouse, or touch.',
       levelProgress: 'Level {level} · {points} / {target}',
       totalScore: 'Total sunshine: {score}', remaining: '{seconds}s to surprise',
       lastCatch: 'one last catch', lives: '{count} lives remaining',
@@ -49,7 +51,7 @@ export const GAME_CONFIG = {
     },
     result: {
       winEyebrow: 'RIGHT WHERE YOU BELONG', loseEyebrow: 'EVEN FLOWERS NEED A LITTLE RAIN',
-      winArt: 'A bowl-haired boy in grey and a girl with side-parted wavy hair in dark red standing happily side-by-side beneath a heart',
+      winArt: 'A boy with solid black side-swept bangs in a grey top and a girl with wavy black hair in a charcoal sweater and white collar standing side-by-side beneath a heart',
       loseArt: 'A gentle rain cloud watering a little flower',
       winTitle: 'You Won!', loseTitle: 'A fresh start?',
       winCopy: 'I was falling in love…\nand you were there to catch me.',
@@ -62,11 +64,11 @@ export const GAME_CONFIG = {
   },
   gameplay: {
     roundTarget: 500, finaleSeconds: 30, finalePause: 1.2, countdown: 3, lives: 3,
-    baseSpeed: 100, speedVariation: 50, speedPerSecond: 1.5,
-    speedStepPerLevel: .18, hazardStepPerLevel: .45, spawnInterval: .72,
+    baseSpeed: 260, speedVariation: 90, speedPerSecond: 2.5,
+    speedMultiplierPerLevel: 1.6, spawnMultiplierPerLevel: 1.55, hazardStepPerLevel: .7, spawnInterval: .5,
     girlSpeedBoost: 1.18, bubbleSeconds: 1.6, bubbleRise: 38, maxBubbles: 3,
   },
-  intro: { launchMs: 1400, paperRevealMs: 1700 },
+  intro: { bouquetArrivalMs: 900, bouquetZoomMs: 650, launchMs: 1400, paperRevealMs: 1700 },
 };
 
 export const TEXT_CONTENT = GAME_CONFIG.text;

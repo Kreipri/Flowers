@@ -56,13 +56,13 @@ body{margin:0;color:#6d5a60;font-family:Quicksand,sans-serif;background:#f8f1e9}
 .bouquet-layer svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 14px 12px #9d7d5e12)}
 .bouquet-back{z-index:1}
 .bouquet-front{z-index:3}
-.envelope-track{position:absolute;z-index:2;left:calc(50% - 100px);top:0;width:200px;height:128px;transform:translateY(190px) rotate(-90deg)}
-.envelope-track[data-state="launching"]{animation:envelope-emerge 1.4s both cubic-bezier(.22,.61,.36,1)}
-.envelope-track[data-state="interactive"],.envelope-track[data-state="opening"],.envelope-track[data-state="opened"]{transform:translateY(0) rotate(0deg)}
-@keyframes envelope-emerge{0%{transform:translateY(190px) rotate(-90deg)}
-55%{transform:translateY(-80px) rotate(-90deg)}
-85%{transform:translateY(-32px) rotate(0deg)}
-100%{transform:translateY(0) rotate(0deg)}
+.envelope-track{opacity:0;visibility:hidden;position:absolute;z-index:2;left:calc(50% - 100px);top:0;width:200px;height:128px;transform:translateY(190px) rotate(-90deg)}
+.envelope-track[data-state="launching"]{visibility:visible;opacity:1;animation:envelope-emerge 1.4s both cubic-bezier(.22,.61,.36,1)}
+.envelope-track[data-state="interactive"],.envelope-track[data-state="opening"],.envelope-track[data-state="opened"]{visibility:visible;opacity:1;transform:translateY(0) rotate(0deg)}
+@keyframes envelope-emerge{0%,8%{opacity:0;transform:translateY(190px) rotate(-90deg)}
+55%{opacity:1;transform:translateY(-80px) rotate(-90deg)}
+85%{opacity:1;transform:translateY(-32px) rotate(0deg)}
+100%{opacity:1;transform:translateY(0) rotate(0deg)}
 }
 .soft-envelope{position:relative;display:block;width:200px;height:128px;padding:0;border:0;border-radius:18px;background:#fff3d9;box-shadow:0 12px 25px #9d7d5e22;cursor:pointer;perspective:600px}
 .soft-envelope:disabled{cursor:default}
@@ -150,40 +150,58 @@ body{margin:0;color:#6d5a60;font-family:Quicksand,sans-serif;background:#f8f1e9}
 /* Envelope sandwich: back (0), actual moving paper (1), pocket (2), lid (3).
    The pocket masks the lowered sheet until it rises above the envelope opening. */
 .envelope-track[data-state="opening"]{z-index:4}
-.soft-envelope{isolation:isolate;overflow:visible}
+.soft-envelope{isolation:isolate;overflow:hidden}
+.is-opening{overflow:visible}
 .envelope-back,.envelope-front,.envelope-lid{position:absolute;inset:0;pointer-events:none}
 .envelope-back{z-index:0;background:#f0dabb;border-radius:18px}
 .envelope-front{z-index:2}
 .envelope-front svg{filter:drop-shadow(0 -2px 2px #b1906b10)}
 .envelope-lid{z-index:3;transform-origin:center top}
-.envelope-paper{position:absolute;z-index:1;left:14px;top:8px;width:172px;height:108px;padding:14px 12px;background:#fffbf3;border-radius:12px;box-shadow:0 4px 12px #ac8a6c20;transform:translateY(24px);clip-path:inset(0 0 20px 0);display:flex;flex-direction:column;justify-content:center;gap:8px;color:#aa6f7f;pointer-events:none}
+.envelope-paper{visibility:hidden;opacity:0;position:absolute;z-index:1;left:28px;top:18px;width:144px;height:86px;padding:14px 12px;background:#fffbf3;border-radius:12px;box-shadow:0 4px 12px #ac8a6c20;transform:translateY(12px) scale(.85);clip-path:inset(0 0 16px 0);display:flex;flex-direction:column;justify-content:center;gap:8px;color:#aa6f7f;pointer-events:none}
 .envelope-paper strong{font:600 18px Caveat,cursive}
 .envelope-paper span{font:10px/1.5 Quicksand,sans-serif}
 .envelope-label{z-index:3;pointer-events:none}
 .is-opening .envelope-lid{animation:lid-open var(--paper-reveal) forwards}
-.is-opening .envelope-paper{animation:paper-reveal var(--paper-reveal) cubic-bezier(.22,.61,.36,1) forwards}
+.is-opening .envelope-paper{visibility:visible;animation:paper-reveal var(--paper-reveal) cubic-bezier(.22,.61,.36,1) forwards}
 @keyframes lid-open{0%{transform:rotateX(0);opacity:1}18%,100%{transform:rotateX(180deg);opacity:0}}
-@keyframes paper-reveal{0%,18%{transform:translateY(24px) scale(1);clip-path:inset(0 0 20px 0)}30%{transform:translateY(-12px) scale(1);clip-path:inset(0)}70%{transform:translateY(-124px) scale(1);clip-path:inset(0)}100%{transform:translateY(-142px) scale(1.5);clip-path:inset(0)}}
+@keyframes paper-reveal{0%,18%{opacity:0;transform:translateY(12px) scale(.85);clip-path:inset(0 0 16px 0)}30%{opacity:1;transform:translateY(-12px) scale(.85);clip-path:inset(0)}70%{opacity:1;transform:translateY(-112px) scale(1);clip-path:inset(0)}100%{opacity:1;transform:translateY(-142px) scale(1.5);clip-path:inset(0)}}
 .designed-letter .letter-script,.result-copy{white-space:pre-line}
 .designed-letter{transform-origin:center bottom}
 @keyframes letter-reveal{from{opacity:.3;transform:translateY(24px) scale(.82)}to{opacity:1;transform:none}}
 /* Make content editable even when a replacement message is longer than expected. */
 .envelope-paper span,.envelope-paper strong{overflow-wrap:anywhere}
+/* HTML hidden and CSS visibility both gate the envelope before the zoom ends.
+   This remains correct even before animations initialize or fonts finish loading. */
+.envelope-track[hidden]{display:none}
+.bouquet-layer{transform-origin:50% 80%}
+.intro-stack[data-state="arriving"] .bouquet-layer{animation:bouquet-arrive var(--bouquet-arrival) both cubic-bezier(.2,.7,.3,1)}
+.intro-stack[data-state="zooming"] .bouquet-layer{animation:bouquet-zoom var(--bouquet-zoom) both cubic-bezier(.2,.7,.3,1)}
+.intro-stack[data-state="launching"] .bouquet-layer,.intro-stack[data-state="interactive"] .bouquet-layer,.intro-stack[data-state="opening"] .bouquet-layer,.intro-stack[data-state="opened"] .bouquet-layer{transform:translateY(-18px) scale(1.08)}
+@keyframes bouquet-arrive{from{opacity:0;transform:translateY(65px) scale(.78)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes bouquet-zoom{from{transform:translateY(0) scale(1)}to{transform:translateY(-18px) scale(1.08)}}
 `;
 
-// Intro state machine: tucked -> launching -> interactive -> opening -> opened.
+// Intro state machine: arriving -> tucked -> zooming -> launching -> interactive
+// -> opening -> opened. The envelope is removed from layout (hidden) until
+// the bouquet finishes its zoom, so no initial flash can expose it.
 // Closing the modal returns to interactive, without replaying the bouquet launch.
 export default function IntroScreen({ onStartGame, soundMuted, onToggleSound }) {
-  const [envelopeState, setEnvelopeState] = useState('tucked');
+  const [envelopeState, setEnvelopeState] = useState('arriving');
   const envelopeRef = useRef(null);
   const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   useEffect(() => {
     if (envelopeState === 'interactive') envelopeRef.current?.focus({ preventScroll: true });
     // animationend drives normal transitions. Timers also recover if a browser
     // cancels an animation or reduced-motion settings change while it is running.
-    if (!['launching', 'opening'].includes(envelopeState)) return;
-    const next = envelopeState === 'launching' ? 'interactive' : 'opened';
-    const duration = envelopeState === 'launching' ? GAME_CONFIG.intro.launchMs : GAME_CONFIG.intro.paperRevealMs;
+    const transitions = {
+      arriving: ['tucked', GAME_CONFIG.intro.bouquetArrivalMs],
+      zooming: ['launching', GAME_CONFIG.intro.bouquetZoomMs],
+      launching: ['interactive', GAME_CONFIG.intro.launchMs],
+      opening: ['opened', GAME_CONFIG.intro.paperRevealMs],
+    };
+    if (!transitions[envelopeState]) return;
+    const [next, duration] = transitions[envelopeState];
+
     const timer = setTimeout(() => setEnvelopeState(next), reducedMotion() ? 0 : duration + 100);
     return () => clearTimeout(timer);
   }, [envelopeState]);
@@ -192,23 +210,27 @@ export default function IntroScreen({ onStartGame, soundMuted, onToggleSound }) 
   return <div className="intro-scene">
     <p className="intro-heading eyebrow">{TEXT_CONTENT.intro.eyebrow}</p>
     <button className="intro-sound icon-button" onClick={onToggleSound} aria-label={soundMuted ? TEXT_CONTENT.controls.unmute : TEXT_CONTENT.controls.mute}><Icon name={soundMuted ? 'muted' : 'sound'}/></button>
-    <div className="intro-stack">
+    <div className="intro-stack" data-state={envelopeState} style={{ '--bouquet-arrival': `${GAME_CONFIG.intro.bouquetArrivalMs}ms`, '--bouquet-zoom': `${GAME_CONFIG.intro.bouquetZoomMs}ms` }}>
       <h1 className="intro-title">{TEXT_CONTENT.intro.title}</h1>
       <div className="bouquet-layer bouquet-back"><Bouquet/></div>
-      <div className="envelope-track" data-state={envelopeState} style={{ '--paper-reveal': `${GAME_CONFIG.intro.paperRevealMs}ms`, animationDuration: envelopeState === 'launching' ? `${GAME_CONFIG.intro.launchMs}ms` : undefined }} onAnimationEnd={e => {
+      <div className="envelope-track" data-state={envelopeState} hidden={!['launching', 'interactive', 'opening', 'opened'].includes(envelopeState)} style={{ '--paper-reveal': `${GAME_CONFIG.intro.paperRevealMs}ms`, animationDuration: envelopeState === 'launching' ? `${GAME_CONFIG.intro.launchMs}ms` : undefined }} onAnimationEnd={e => {
         if (envelopeState === 'launching' && e.animationName === 'envelope-emerge') setEnvelopeState('interactive');
         if (envelopeState === 'opening' && e.animationName === 'paper-reveal') setEnvelopeState('opened');
       }}>
         <button ref={envelopeRef} type="button" className={`soft-envelope ${envelopeState === 'interactive' ? 'is-ready' : ''} ${envelopeState === 'opening' ? 'is-opening' : ''}`} disabled={envelopeState !== 'interactive'} aria-label={TEXT_CONTENT.controls.openLetter} onClick={() => { sound.playEnvelopeOpen(); setEnvelopeState('opening'); }}>
           <span className="envelope-back" aria-hidden="true"/>
           <span className="envelope-paper" aria-hidden="true"><strong>{TEXT_CONTENT.intro.paperPreview}</strong><span>{TEXT_CONTENT.intro.paperNote}</span></span>
-          <span className="envelope-front" aria-hidden="true"><svg viewBox="0 0 200 128"><path d="M0 40L87 91Q100 98 113 91L200 40V110Q200 128 182 128H18Q0 128 0 110Z" fill="#fff1d6"/><path d="M0 119L83 66Q100 54 117 66L200 119Q200 128 182 128H18Q0 128 0 119Z" fill="#f3dfbd"/></svg></span>
+          <span className="envelope-front" aria-hidden="true"><svg viewBox="0 0 200 128"><path d="M0 12L87 74Q100 85 113 74L200 12V110Q200 128 182 128H18Q0 128 0 110Z" fill="#fff1d6"/><path d="M0 119L83 66Q100 54 117 66L200 119Q200 128 182 128H18Q0 128 0 119Z" fill="#f3dfbd"/></svg></span>
           <span className="envelope-lid" aria-hidden="true"><svg viewBox="0 0 200 128"><path d="M0 9Q0 0 18 0H182Q200 0 200 9L112 73Q100 82 88 73Z" fill="#fff7e5"/><circle cx="100" cy="74" r="17" fill="#dda0a5"/><Heart x={100} y={77} size={.48} color="#fff3e2"/></svg></span>
           <span className="envelope-label">{TEXT_CONTENT.intro.envelopeLabel}</span>
         </button>
       </div>
-      <div className="bouquet-layer bouquet-front"><Bouquet front/></div>
-      {envelopeState === 'tucked' && <button className="bouquet-trigger" aria-label={TEXT_CONTENT.controls.liftLetter} onClick={() => { sound.init(); sound.playCatch(1); setEnvelopeState(reducedMotion() ? 'interactive' : 'launching'); }}>{TEXT_CONTENT.controls.liftLetter}</button>}
+      <div className="bouquet-layer bouquet-front" onAnimationEnd={e => {
+        // Only the front layer advances the state; the back plays in sync.
+        if (envelopeState === 'arriving' && e.animationName === 'bouquet-arrive') setEnvelopeState('tucked');
+        if (envelopeState === 'zooming' && e.animationName === 'bouquet-zoom') setEnvelopeState('launching');
+      }}><Bouquet front/></div>
+      {envelopeState === 'tucked' && <button className="bouquet-trigger" aria-label={TEXT_CONTENT.controls.liftLetter} onClick={() => { sound.init(); sound.playCatch(1); setEnvelopeState('zooming'); }}>{TEXT_CONTENT.controls.liftLetter}</button>}
     </div>
     <div className="intro-footer" aria-live="polite"><strong>{footer[0]}</strong><small>{footer[1]}</small></div>
     {envelopeState === 'opened' && <OpenLetterModal onStartGame={onStartGame} onClose={closeLetter}/>}
