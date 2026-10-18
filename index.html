@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Just because… | A little sunshine</title>
-  
+
   <!-- Google Fonts: Fredoka (Bold playful rounded font), Caveat (Cursive handwriting), and Quicksand -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@600;700;800;900&family=Nunito:wght@700;800;900&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@600;700;800;900&family=Nunito:wght@700;800;900&family=Quicksand:wght@500;600;700&display=swap"
+    rel="stylesheet">
+
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone@8.0.7/babel.min.js"></script>
@@ -19,6 +22,7 @@
 
 
 </head>
+
 <body>
   <div id="root"></div>
 
@@ -28,434 +32,434 @@
 
   <!-- Generated from src/ by scripts/sync-standalone.rb -->
   <script type="text/babel" data-presets="smiley">
-// Edit all player-facing copy here. Templates use {name}; letter paragraphs can
-// contain newlines. This module is placed FIRST in the generated index.html script.
-const GAME_CONFIG = {
-  text: {
-    appTitle: 'Just because… | A little sunshine',
-    symbols: { close: '×', arrow: '↗' },
-    controls: {
-      mute: 'Mute sound', unmute: 'Unmute sound', pause: 'Pause game',
-      resume: 'Resume game', returnToLetter: 'Return to letter', closeLetter: 'Close letter',
-      openLetter: 'Open your letter', liftLetter: 'Lift the letter out of the bouquet',
-    },
-    intro: {
-      eyebrow: 'A LITTLE SUNSHINE, WRAPPED IN LOVE', title: 'Just because...',
-      envelopeLabel: 'JUST FOR YOU', paperPreview: 'Dearest lovely you,',
-      paperNote: 'A little sunshine, just for you. ♡',
-      footer: {
-        arriving: ['A little sunshine is growing…', 'A SPECIAL DELIVERY'],
-        zooming: ['A little love, coming closer.', 'YOUR LETTER IS ON ITS WAY'],
-        tucked: ['A little something to make you smile.', 'TAP THE BOUQUET TO FIND YOUR LETTER'],
-        launching: ['A special delivery…', 'WITH A LITTLE LOVE'],
-        interactive: ['Some words, picked just for you.', 'TAP THE ENVELOPE TO OPEN'],
-        opening: ['A little love, unfolding.', 'YOUR LETTER IS ON ITS WAY'],
-        opened: ['Some words, picked just for you.', 'WITH A LITTLE LOVE'],
+    // Edit all player-facing copy here. Templates use {name}; letter paragraphs can
+    // contain newlines. This module is placed FIRST in the generated index.html script.
+    const GAME_CONFIG = {
+      text: {
+        appTitle: 'Flowers for you... | A little sunshine',
+        symbols: { close: '×', arrow: '↗' },
+        controls: {
+          mute: 'Mute sound', unmute: 'Unmute sound', pause: 'Pause game',
+          resume: 'Resume game', returnToLetter: 'Return to letter', closeLetter: 'Close letter',
+          openLetter: 'Open your letter', liftLetter: 'Lift the letter out of the bouquet',
+        },
+        intro: {
+          eyebrow: 'A LITTLE SUNSHINE, WRAPPED IN LOVE', title: 'Flowers for you...',
+          envelopeLabel: 'JUST FOR YOU', paperPreview: 'My dearest neog,',
+          paperNote: 'A little sunshine, just for you. ♡',
+          footer: {
+            arriving: ['A little sunshine is growing…', 'A SPECIAL DELIVERY'],
+            zooming: ['A little love, coming closer.', 'YOUR LETTER IS ON ITS WAY'],
+            tucked: ['A little something to make you smile.', 'TAP THE BOUQUET TO FIND YOUR LETTER'],
+            launching: ['A special delivery…', 'WITH A LITTLE LOVE'],
+            interactive: ['Some words, picked just for you.', 'TAP THE ENVELOPE TO OPEN'],
+            opening: ['A little love, unfolding.', 'YOUR LETTER IS ON ITS WAY'],
+            opened: ['Some words, picked just for you.', 'WITH A LITTLE LOVE'],
+          },
+        },
+        letter: {
+          eyebrow: 'A LITTLE NOTE, JUST FOR YOU', greeting: 'My dearest neog,',
+          paragraphs: [
+            'I hope these sunflowers bring you warmth and comfort. You deserve all of it and more.',
+            'Things will get better in time. Take a breath, I\'ll be with you through it all. You can lean on me and unburden your heart.',
+          ],
+          verse: 'Every flower blooms at its own pace.\nAnd so do you.',
+          invitation: 'There’s a tiny meadow waiting for you. Gather the good things, dodge the little rain clouds, and keep your arms open for one last surprise.',
+          mission: '{points} sunshine points or {seconds} seconds.',
+          surprise: 'Then, catch someone very special.',
+          play: 'Let’s catch some sunshine', controls: 'Move your mouse, drag, or use ← → / A D',
+          signoff: 'with much love, always ♡ beag',
+        },
+        game: {
+          canvasLabel: 'Catch sunshines! Move with arrow keys, A and D, a mouse, or touch.',
+          levelProgress: 'Level {level} · {points} / {target}',
+          totalScore: 'Total sunshine: {score}', remaining: '{seconds}s to surprise',
+          lastCatch: 'one last catch', lives: '{count} lives remaining',
+          waitingTitle: 'A little surprise is on its way…', waitingCopy: 'Take a breath. Keep your arms open.',
+          fallingTitle: 'One last catch. It’s me!', fallingCopy: 'Move beneath her and catch her in your arms.',
+          streak: '{combo}× sunshine streak · ', controls: 'Move with your mouse, drag, or use ← → / A D',
+          countdownTitle: 'YOUR LITTLE MEADOW AWAITS', countdownCopy: 'Catch the sunshine. Leave the rain.',
+          pauseTitle: 'A little breather.', pauseCopy: 'Your meadow will be right here.',
+          resume: 'Keep catching', back: 'Back to your letter',
+          narratorLabel: 'A NOTE FROM BEA',
+          narratorMessages: ['You can get through anything!', 'My favorite sunshine. ♡', 'Just keep going!', 'I love spending time with you.', 'Life is sweeter with you.', 'I love you always.'],
+        },
+        result: {
+          winEyebrow: 'RIGHT WHERE YOU BELONG', loseEyebrow: 'EVEN FLOWERS NEED A LITTLE RAIN',
+          winArt: 'A boy with solid black side-swept bangs in a grey top and a girl with wavy black hair in a charcoal sweater and white collar standing side-by-side beneath a heart',
+          loseArt: 'A wilted flower beneath a gentle rain cloud',
+          missedEyebrow: 'ONE LAST CATCH, MISSED',
+          missedTitle: 'bea fucking died lol',
+          missedCopy: 'She slipped past your arms.',
+          missedArt: 'A chibi girl lying down in a stylized, cartoonish puddle of deep red blood',
+          winTitle: 'You Won!', loseTitle: 'Game Over',
+          winCopy: 'You caught me!\nnow you\'re stuck with me 4ever!',
+          loseCopy: 'A little rain, a little rest.\nLet’s find the sunshine again.',
+          best: 'YOUR NEW SUNSHINE BEST', total: 'TOTAL SUNSHINE GATHERED',
+          streak: 'LEVEL {level} · SWEETEST STREAK {combo}×',
+          flowers: '{count} flowers', stars: '{count} stars', hearts: '{count} hearts', sparkles: '{count} sparkles',
+          playAgain: 'Play Again · Level {level}', back: 'Read my letter again',
+        },
       },
-    },
-    letter: {
-      eyebrow: 'A LITTLE NOTE, JUST FOR YOU', greeting: 'Dearest lovely you,',
-      paragraphs: [
-        'Some days call for a little extra sunshine. So I picked a handful, wrapped it up, and saved it just for you.',
-        'Take a breath. Let your shoulders soften. You deserve all the small, sweet things life has to offer.',
-      ],
-      verse: 'Every flower blooms at its own pace.\nAnd so do you.',
-      invitation: 'There’s a tiny meadow waiting for you. Gather the good things, dodge the little rain clouds, and keep your arms open for one last surprise.',
-      mission: '{points} sunshine points or {seconds} seconds.',
-      surprise: 'Then, catch someone very special.',
-      play: 'Let’s catch some sunshine', controls: 'Move your mouse, drag, or use ← → / A D',
-      signoff: 'with a little love, always ♡',
-    },
-    game: {
-      canvasLabel: 'Catch sunshine with the boy in a plain grey top. Move with arrow keys, A and D, a mouse, or touch.',
-      levelProgress: 'Level {level} · {points} / {target}',
-      totalScore: 'Total sunshine: {score}', remaining: '{seconds}s to surprise',
-      lastCatch: 'one last catch', lives: '{count} lives remaining',
-      waitingTitle: 'A little surprise is on its way…', waitingCopy: 'Take a breath. Keep your arms open.',
-      fallingTitle: 'One last catch. It’s me!', fallingCopy: 'Move beneath her and catch her in your arms.',
-      streak: '{combo}× sunshine streak · ', controls: 'Move with your mouse, drag, or use ← → / A D',
-      countdownTitle: 'YOUR LITTLE MEADOW AWAITS', countdownCopy: 'Catch the sunshine. Leave the rain.',
-      pauseTitle: 'A little breather.', pauseCopy: 'Your meadow will be right here.',
-      resume: 'Keep catching', back: 'Back to your letter',
-      narratorLabel: 'A NOTE FROM BEA',
-      narratorMessages: ['You make me bloom!', 'My favorite sunshine. ♡', 'Picked just for you!', 'You caught a little joy!', 'Life is sweeter with you.', 'A little love, always.'],
-    },
-    result: {
-      winEyebrow: 'RIGHT WHERE YOU BELONG', loseEyebrow: 'EVEN FLOWERS NEED A LITTLE RAIN',
-      winArt: 'A boy with solid black side-swept bangs in a grey top and a girl with wavy black hair in a charcoal sweater and white collar standing side-by-side beneath a heart',
-      loseArt: 'A wilted flower beneath a gentle rain cloud',
-      missedEyebrow: 'ONE LAST CATCH, MISSED',
-      missedTitle: 'bea fucking died lol',
-      missedCopy: 'She slipped past your arms.',
-      missedArt: 'A chibi girl lying down in a stylized, cartoonish puddle of deep red blood',
-      winTitle: 'You Won!', loseTitle: 'Game Over',
-      winCopy: 'I was falling in love…\nand you were there to catch me.',
-      loseCopy: 'A little rain, a little rest.\nLet’s find the sunshine again.',
-      best: 'YOUR NEW SUNSHINE BEST', total: 'TOTAL SUNSHINE GATHERED',
-      streak: 'LEVEL {level} · SWEETEST STREAK {combo}×',
-      flowers: '{count} flowers', stars: '{count} stars', hearts: '{count} hearts', sparkles: '{count} sparkles',
-      playAgain: 'Play Again · Level {level}', back: 'Read my letter again',
-    },
-  },
-  gameplay: {
-    roundTarget: 500, finaleSeconds: 30, finalePause: 1.2, countdown: 3, lives: 3,
-    baseSpeed: 260, speedVariation: 90, speedPerSecond: 2.5,
-    speedMultiplierPerLevel: 1.6, spawnMultiplierPerLevel: 1.55, hazardStepPerLevel: .7, spawnInterval: .5,
-    finalCharacterHalfWidth: 40, finalDropEdgePadding: 12, girlSpeedBoost: 1.18, narratorSeconds: 2.4, narratorRise: 14,
-  },
-  intro: { bouquetArrivalMs: 900, bouquetZoomMs: 650, launchMs: 1400, paperRevealMs: 1700 },
-};
+      gameplay: {
+        roundTarget: 500, finaleSeconds: 30, finalePause: 1.2, countdown: 3, lives: 3,
+        baseSpeed: 260, speedVariation: 90, speedPerSecond: 2.5,
+        speedMultiplierPerLevel: 1.6, spawnMultiplierPerLevel: 1.55, hazardStepPerLevel: .7, spawnInterval: .5,
+        finalCharacterHalfWidth: 40, finalDropEdgePadding: 12, girlSpeedBoost: 1.18, narratorSeconds: 2.4, narratorRise: 14,
+      },
+      intro: { bouquetArrivalMs: 900, bouquetZoomMs: 650, launchMs: 1400, paperRevealMs: 1700 },
+    };
 
-const TEXT_CONTENT = GAME_CONFIG.text;
+    const TEXT_CONTENT = GAME_CONFIG.text;
 
-// Keep formatting independent of React so the canvas HUD and DOM share copy.
-function formatText(template, values = {}) {
-  return template.replace(/\{(\w+)\}/g, (match, key) => values[key] ?? match);
-}
+    // Keep formatting independent of React so the canvas HUD and DOM share copy.
+    function formatText(template, values = {}) {
+      return template.replace(/\{(\w+)\}/g, (match, key) => values[key] ?? match);
+    }
 
 
-const { useState, useEffect, useRef, useCallback } = React;
+    const { useState, useEffect, useRef, useCallback } = React;
 
-// Web Audio API Synthesizer (Zero external audio file dependencies)
-class SoundEngine {
-  constructor() {
-    this.ctx = null;
-    this.muted = false;
-    this.bgmPlaying = false;
-    this.bgmTimer = null;
-  }
+    // Web Audio API Synthesizer (Zero external audio file dependencies)
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.muted = false;
+        this.bgmPlaying = false;
+        this.bgmTimer = null;
+      }
 
-  init() {
-    if (!this.ctx && typeof window !== 'undefined') {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (AudioContext) {
-        this.ctx = new AudioContext();
+      init() {
+        if (!this.ctx && typeof window !== 'undefined') {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      // Pop / Chime sound for positive catches (sweet pentatonic notes)
+      playCatch(combo = 1) {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const scale = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50, 1174.66];
+        const noteIndex = Math.min(scale.length - 1, (combo - 1) % scale.length);
+        const freq = scale[noteIndex];
+
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.05, now + 0.15);
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.3);
+
+        const osc2 = this.ctx.createOscillator();
+        const gain2 = this.ctx.createGain();
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(freq * 2, now);
+        gain2.gain.setValueAtTime(0.12, now);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        osc2.connect(gain2);
+        gain2.connect(this.ctx.destination);
+        osc2.start(now);
+        osc2.stop(now + 0.25);
+      }
+
+      // Warning tone when colliding with a hazard
+      playHurt() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.exponentialRampToValueAtTime(40, now + 0.25);
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.26);
+      }
+
+      // Envelope opening flutter sound
+      playEnvelopeOpen() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const notes = [440, 554.37, 659.25, 880];
+        notes.forEach((f, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(f, now + i * 0.08);
+          gain.gain.setValueAtTime(0.15, now + i * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.4);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + i * 0.08);
+          osc.stop(now + i * 0.08 + 0.45);
+        });
+      }
+
+      // A short falling chime for either defeat. This method must exist: a missing
+      // end sound previously threw before the result callback could render the UI.
+      playDefeat() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        [330, 277, 220].forEach((frequency, index) => {
+          const start = now + index * .14;
+          const oscillator = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          oscillator.type = 'sine';
+          oscillator.frequency.setValueAtTime(frequency, start);
+          gain.gain.setValueAtTime(.12, start);
+          gain.gain.exponentialRampToValueAtTime(.001, start + .35);
+          oscillator.connect(gain);
+          gain.connect(this.ctx.destination);
+          oscillator.start(start);
+          oscillator.stop(start + .36);
+        });
+      }
+
+      // Uplifting victory harp
+      playVictory() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98];
+        notes.forEach((f, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(f, now + i * 0.1);
+          gain.gain.setValueAtTime(0.2, now + i * 0.1);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.6);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + i * 0.1);
+          osc.stop(now + i * 0.1 + 0.65);
+        });
+      }
+
+      // Ambient gentle background lullaby arpeggio loop
+      startBgm() {
+        if (this.bgmPlaying || this.muted) return;
+        this.bgmPlaying = true;
+        this.init();
+
+        const chords = [
+          [392, 493.88, 587.33], // G major
+          [440, 523.25, 659.25], // A minor
+          [329.63, 392, 493.88], // E minor
+          [349.23, 440, 523.25]  // F major
+        ];
+        let chordIdx = 0;
+
+        const playChimeNote = () => {
+          if (!this.bgmPlaying || this.muted || !this.ctx) return;
+          const now = this.ctx.currentTime;
+          const currentChord = chords[chordIdx];
+          const note = currentChord[Math.floor(Math.random() * currentChord.length)];
+
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(note * (Math.random() > 0.5 ? 2 : 1), now);
+
+          gain.gain.setValueAtTime(0.035, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.8);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 1.9);
+
+          chordIdx = (chordIdx + 1) % chords.length;
+          this.bgmTimer = setTimeout(playChimeNote, 1200 + Math.random() * 800);
+        };
+
+        playChimeNote();
+      }
+
+      stopBgm() {
+        this.bgmPlaying = false;
+        if (this.bgmTimer) clearTimeout(this.bgmTimer);
+      }
+
+      toggleMute() {
+        this.muted = !this.muted;
+        if (this.muted) {
+          this.stopBgm();
+        } else {
+          this.startBgm();
+        }
+        return this.muted;
       }
     }
-    if (this.ctx && this.ctx.state === 'suspended') {
-      this.ctx.resume();
-    }
-  }
 
-  // Pop / Chime sound for positive catches (sweet pentatonic notes)
-  playCatch(combo = 1) {
-    if (this.muted) return;
-    this.init();
-    if (!this.ctx) return;
+    const sound = new SoundEngine();
 
-    const now = this.ctx.currentTime;
-    const scale = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50, 1174.66];
-    const noteIndex = Math.min(scale.length - 1, (combo - 1) % scale.length);
-    const freq = scale[noteIndex];
 
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(freq, now);
-    osc.frequency.exponentialRampToValueAtTime(freq * 1.05, now + 0.15);
 
-    gain.gain.setValueAtTime(0.25, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
-
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.3);
-
-    const osc2 = this.ctx.createOscillator();
-    const gain2 = this.ctx.createGain();
-    osc2.type = 'triangle';
-    osc2.frequency.setValueAtTime(freq * 2, now);
-    gain2.gain.setValueAtTime(0.12, now);
-    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
-    osc2.connect(gain2);
-    gain2.connect(this.ctx.destination);
-    osc2.start(now);
-    osc2.stop(now + 0.25);
-  }
-
-  // Warning tone when colliding with a hazard
-  playHurt() {
-    if (this.muted) return;
-    this.init();
-    if (!this.ctx) return;
-
-    const now = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(140, now);
-    osc.frequency.exponentialRampToValueAtTime(40, now + 0.25);
-
-    gain.gain.setValueAtTime(0.3, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.26);
-  }
-
-  // Envelope opening flutter sound
-  playEnvelopeOpen() {
-    if (this.muted) return;
-    this.init();
-    if (!this.ctx) return;
-
-    const now = this.ctx.currentTime;
-    const notes = [440, 554.37, 659.25, 880];
-    notes.forEach((f, i) => {
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(f, now + i * 0.08);
-      gain.gain.setValueAtTime(0.15, now + i * 0.08);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.4);
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.start(now + i * 0.08);
-      osc.stop(now + i * 0.08 + 0.45);
-    });
-  }
-
-  // A short falling chime for either defeat. This method must exist: a missing
-  // end sound previously threw before the result callback could render the UI.
-  playDefeat() {
-    if (this.muted) return;
-    this.init();
-    if (!this.ctx) return;
-    const now = this.ctx.currentTime;
-    [330, 277, 220].forEach((frequency, index) => {
-      const start = now + index * .14;
-      const oscillator = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(frequency, start);
-      gain.gain.setValueAtTime(.12, start);
-      gain.gain.exponentialRampToValueAtTime(.001, start + .35);
-      oscillator.connect(gain);
-      gain.connect(this.ctx.destination);
-      oscillator.start(start);
-      oscillator.stop(start + .36);
-    });
-  }
-
-  // Uplifting victory harp
-  playVictory() {
-    if (this.muted) return;
-    this.init();
-    if (!this.ctx) return;
-
-    const now = this.ctx.currentTime;
-    const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98];
-    notes.forEach((f, i) => {
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(f, now + i * 0.1);
-      gain.gain.setValueAtTime(0.2, now + i * 0.1);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.6);
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.start(now + i * 0.1);
-      osc.stop(now + i * 0.1 + 0.65);
-    });
-  }
-
-  // Ambient gentle background lullaby arpeggio loop
-  startBgm() {
-    if (this.bgmPlaying || this.muted) return;
-    this.bgmPlaying = true;
-    this.init();
-
-    const chords = [
-      [392, 493.88, 587.33], // G major
-      [440, 523.25, 659.25], // A minor
-      [329.63, 392, 493.88], // E minor
-      [349.23, 440, 523.25]  // F major
-    ];
-    let chordIdx = 0;
-
-    const playChimeNote = () => {
-      if (!this.bgmPlaying || this.muted || !this.ctx) return;
-      const now = this.ctx.currentTime;
-      const currentChord = chords[chordIdx];
-      const note = currentChord[Math.floor(Math.random() * currentChord.length)];
-
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(note * (Math.random() > 0.5 ? 2 : 1), now);
-
-      gain.gain.setValueAtTime(0.035, now);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.8);
-
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.start(now);
-      osc.stop(now + 1.9);
-
-      chordIdx = (chordIdx + 1) % chords.length;
-      this.bgmTimer = setTimeout(playChimeNote, 1200 + Math.random() * 800);
+    // SVG menus and Canvas sprites share the same hair silhouettes.
+    // Uneven side-swept bangs for the boy; side-parted, medium waves for the girl.
+    // A single semicircular arc keeps the boy’s crown perfectly round; only his
+    // bangs are textured. Both hairstyles are solid black, without highlights.
+    const CHARACTER_HAIR = {
+      boy: 'M-30-19A30 30 0 0 1 30-19L30-7L24-16L20-27Q12-18 2-14L5-23Q-6-11-18-9L-14-19L-25-11L-26-3Z',
+      girlBack: 'M-29-22Q-40 0-32 14Q-41 31-25 43Q-19 48-13 40L19 43Q38 39 32 22Q43 6 31-9Q33-43 4-47Q-23-50-29-22Z',
+      girlFront: 'M-29-11Q-37-47-2-49Q31-51 30-10L24-16Q13-22 7-37Q-2-18-29-11Z',
     };
 
-    playChimeNote();
-  }
-
-  stopBgm() {
-    this.bgmPlaying = false;
-    if (this.bgmTimer) clearTimeout(this.bgmTimer);
-  }
-
-  toggleMute() {
-    this.muted = !this.muted;
-    if (this.muted) {
-      this.stopBgm();
-    } else {
-      this.startBgm();
-    }
-    return this.muted;
-  }
-}
-
-const sound = new SoundEngine();
-
-
-
-// SVG menus and Canvas sprites share the same hair silhouettes.
-// Uneven side-swept bangs for the boy; side-parted, medium waves for the girl.
-// A single semicircular arc keeps the boy’s crown perfectly round; only his
-// bangs are textured. Both hairstyles are solid black, without highlights.
-const CHARACTER_HAIR = {
-  boy: 'M-30-19A30 30 0 0 1 30-19L30-7L24-16L20-27Q12-18 2-14L5-23Q-6-11-18-9L-14-19L-25-11L-26-3Z',
-  girlBack: 'M-29-22Q-40 0-32 14Q-41 31-25 43Q-19 48-13 40L19 43Q38 39 32 22Q43 6 31-9Q33-43 4-47Q-23-50-29-22Z',
-  girlFront: 'M-29-11Q-37-47-2-49Q31-51 30-10L24-16Q13-22 7-37Q-2-18-29-11Z',
-};
-
-const CHARACTER_STYLE = {
-  hair: '#000000', guyTop: '#a6a9b1', girlTop: '#555661',
-  pants: '#222229', shoes: '#111111', collar: '#fffaf4', blush: '#e99598',
-};
-// These collar panels are clothing at the neck, never marks in either hairstyle.
-const GIRL_COLLAR = 'M-13 12L0 18L-7 27L-18 17ZM13 12L0 18L7 27L18 17Z';
-
-// Shared, outline-free artwork keeps the intro, HUD, and ending in one visual family.
-function Heart({ x = 0, y = 0, size = 1, color = '#dc8c9c' }) {
-  return <path transform={`translate(${x} ${y}) scale(${size})`} d="M0 12C-30-6-15-27 0-13C15-27 30-6 0 12Z" fill={color}/>;
-}
-
-function Flower({ x = 0, y = 0, size = 1, rose = false }) {
-  return <g transform={`translate(${x} ${y}) scale(${size})`}>
-    {Array.from({ length: rose ? 6 : 10 }, (_, i) => <ellipse key={i} cy={rose ? -12 : -23} rx={rose ? 21 : 10} ry={rose ? 20 : 18} fill={rose ? '#d9828e' : '#f5cb79'} transform={`rotate(${i * (rose ? 60 : 36)})`}/>)}
-    <circle r={rose ? 22 : 21} fill={rose ? '#c66b7b' : '#b88761'}/>
-    {rose ? <path d="M-12 0Q-12-14 2-11Q16-9 10 3Q7 11-3 6" fill="none" stroke="#e9a0a5" strokeWidth="6" strokeLinecap="round"/> : <g fill="#745b50"><circle cx="-6" cy="-2" r="2"/><circle cx="6" cy="-2" r="2"/><path d="M-4 5Q0 9 4 5" fill="none" stroke="#745b50" strokeWidth="2" strokeLinecap="round"/></g>}
-  </g>;
-}
-
-function Filler({ x, y, size = 1 }) {
-  return <g transform={`translate(${x} ${y}) scale(${size})`}>{[0, 72, 144, 216, 288].map(a => <ellipse key={a} cy="-8" rx="6" ry="8" fill="#fffaf0" transform={`rotate(${a})`}/>)}<circle r="5" fill="#e9be72"/></g>;
-}
-
-function Leaf({ x, y, rotate = 0, size = 1 }) {
-  return <path transform={`translate(${x} ${y}) rotate(${rotate}) scale(${size})`} d="M0 0C-39-4-46-40-27-57C4-49 20-18 0 0Z" fill="#94b69b"/>;
-}
-
-function Bouquet({ front = false }) {
-  return <svg viewBox="0 0 420 460" aria-hidden="true">
-    {front ? <>
-      <Leaf x={87} y={292} rotate={-65}/><Leaf x={333} y={293} rotate={100}/>
-      <Flower x={101} y={244} size={.88} rose/><Flower x={305} y={253} size={.9} rose/>
-      <Flower x={153} y={288} size={.95}/><Flower x={249} y={291} size={1.1} rose/>
-      <Filler x={73} y={288}/><Filler x={335} y={306}/><Filler x={211} y={272}/>
-      <path d="M82 310Q210 352 339 310L245 432Q210 453 176 432Z" fill="#c4d9bd"/>
-      <path d="M210 342Q280 337 339 310L245 432Q223 442 210 442Z" fill="#a7c7a9"/>
-      <path d="M186 400Q151 370 149 395Q148 419 199 409M228 401Q263 372 269 396Q273 418 221 410" fill="#e5a0a5"/>
-      <path d="M199 409L182 441M221 409L240 441" stroke="#dc929d" strokeWidth="11" strokeLinecap="round"/>
-      <rect x="194" y="396" width="32" height="22" rx="10" fill="#cf8191"/>
-    </> : <>
-      <path d="M210 423L49 189Q50 167 73 177L210 225L347 177Q373 169 369 193Z" fill="#e2e8cf"/>
-      {[[76,212,-40],[110,157,-20],[190,139,0],[278,155,65],[346,219,100],[64,280,-75],[352,283,115]].map(([x,y,r],i) => <Leaf key={i} x={x} y={y} rotate={r} size={1.15}/>)}
-      <path d="M210 410L105 164M210 410L203 137M210 410L310 176" stroke="#94b69b" strokeWidth="8" strokeLinecap="round"/>
-      <Flower x={107} y={188}/><Flower x={212} y={145} size={1.08}/><Flower x={310} y={196} size={.9}/>
-      <Flower x={161} y={216} size={1.05} rose/><Flower x={263} y={223} size={1.12} rose/>
-      <Filler x={57} y={220}/><Filler x={153} y={137}/><Filler x={275} y={136}/><Filler x={356} y={239}/>
-      <Filler x={197} y={236} size={.8}/><Filler x={124} y={287} size={.7}/>
-    </>}
-  </svg>;
-}
-
-function Character({ girl = false, fallen = false, x = 0, y = 0, size = 1 }) {
-  const top = girl ? CHARACTER_STYLE.girlTop : CHARACTER_STYLE.guyTop;
-  return <g transform={`translate(${x} ${y}) scale(${size})`}>
-    {girl && <path d={CHARACTER_HAIR.girlBack} fill={CHARACTER_STYLE.hair}/>}
-    <rect x="-20" y="40" width="16" height="25" rx="7" fill={CHARACTER_STYLE.pants}/><rect x="4" y="40" width="16" height="25" rx="7" fill={CHARACTER_STYLE.pants}/>
-    <rect x="-23" y="59" width="21" height="10" rx="5" fill={CHARACTER_STYLE.shoes}/><rect x="2" y="59" width="21" height="10" rx="5" fill={CHARACTER_STYLE.shoes}/>
-    <rect x="-27" y="9" width="54" height="42" rx="16" fill={top}/>
-    <path d="M-19 22L-30 38M19 22L30 38" stroke={top} strokeWidth="15" strokeLinecap="round"/>
-    <circle cy="-14" r="29" fill="#f2cfb8"/>
-    <path d={girl ? CHARACTER_HAIR.girlFront : CHARACTER_HAIR.boy} fill={CHARACTER_STYLE.hair}/>
-    <ellipse cx="-17" cy="-5" rx="6" ry="3.5" fill={CHARACTER_STYLE.blush}/><ellipse cx="17" cy="-5" rx="6" ry="3.5" fill={CHARACTER_STYLE.blush}/>
-    <path d={fallen ? 'M-12-9h8M5-9h8M-3 2h6' : 'M-12-9q4-6 8 0M5-9q4-6 8 0M-4 0q4 5 8 0'} fill="none" stroke="#745c59" strokeWidth="2.5" strokeLinecap="round"/>
-    {girl && <path d={GIRL_COLLAR} fill={CHARACTER_STYLE.collar}/>}
-  </g>;
-}
-
-// Stylized flat-vector failed-catch scene; no anatomical injury details.
-function FallenGirl() {
-  return <g>
-    <path d="M58 135C41 120 73 112 96 115C121 101 147 112 168 116C199 111 224 123 218 136C241 145 216 163 188 158C163 170 141 159 120 163C91 173 64 156 58 150C39 151 37 140 58 135Z" fill="#8b243b"/>
-    <ellipse cx="49" cy="161" rx="9" ry="4" fill="#8b243b"/><ellipse cx="231" cy="146" rx="6" ry="3" fill="#8b243b"/>
-    <g transform="translate(141 118) rotate(-90)"><Character girl fallen size={.95}/></g>
-  </g>;
-}
-
-function Icon({ name, size = 22 }) {
-  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    {name === 'heart' ? <path fill="currentColor" stroke="none" d="M12 21C-5 10 3-3 12 5C21-3 29 10 12 21Z"/> : name === 'pause' ? <><path d="M8 5v14M16 5v14"/></> : name === 'play' ? <path d="m8 5 11 7-11 7Z" fill="currentColor"/> : name === 'home' ? <><rect x="3" y="5" width="18" height="14" rx="4"/><path d="m4 7 8 6 8-6"/></> : name === 'muted' ? <><path d="M11 4 5 9H2v6h3l6 5ZM16 9l6 6m0-6-6 6"/></> : <><path d="M11 4 5 9H2v6h3l6 5ZM16 8q5 4 0 8M19 4q9 8 0 16"/></>}
-  </svg>;
-}
-
-
-
-function OpenLetterModal({ onStartGame, onClose }) {
-  const letterRef = useRef(null);
-  useEffect(() => {
-    const previousFocus = document.activeElement;
-    letterRef.current?.focus();
-    const handleKey = e => {
-      if (e.key === 'Escape') onClose();
-      if (e.key !== 'Tab') return;
-      // Keep keyboard focus on the letter's two actions until it closes.
-      const controls = letterRef.current.querySelectorAll('button');
-      const first = controls[0], last = controls[controls.length - 1];
-      if (e.shiftKey && (document.activeElement === first || document.activeElement === letterRef.current)) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    const CHARACTER_STYLE = {
+      hair: '#000000', guyTop: '#a6a9b1', girlTop: '#555661',
+      pants: '#222229', shoes: '#111111', collar: '#fffaf4', blush: '#e99598',
     };
-    document.addEventListener('keydown', handleKey);
-    return () => { document.removeEventListener('keydown', handleKey); previousFocus?.focus(); };
-  }, [onClose]);
-  const text = TEXT_CONTENT.letter;
-  // Portal to body: fixed backdrop must never inherit the intro's overflow
-  // clipping, isolation, or any animated bouquet transform.
-  return ReactDOM.createPortal(<div className="letter-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-    <section ref={letterRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="letter-title" className="designed-letter custom-scrollbar">
-      <button className="letter-close" onClick={onClose} aria-label={TEXT_CONTENT.controls.closeLetter}>{TEXT_CONTENT.symbols.close}</button>
-      <svg className="letter-flower" viewBox="-50 -50 100 100" aria-hidden="true"><Flower size={.8}/></svg>
-      <p className="eyebrow">{text.eyebrow}</p>
-      <h2 id="letter-title">{text.greeting}</h2>
-      {text.paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
-      <p className="letter-script">{text.verse}</p>
-      <p>{text.invitation}</p>
-      <div className="letter-mission">{formatText(text.mission, { points: GAME_CONFIG.gameplay.roundTarget, seconds: GAME_CONFIG.gameplay.finaleSeconds })}<br/><span>{text.surprise}</span></div>
-      <button onClick={onStartGame} className="primary-button">{text.play}<span aria-hidden="true">{TEXT_CONTENT.symbols.arrow}</span></button>
-      <p className="letter-controls">{text.controls}</p>
-      <p className="letter-signoff">{text.signoff}</p>
-    </section>
-  </div>, document.body);
-}
+    // These collar panels are clothing at the neck, never marks in either hairstyle.
+    const GIRL_COLLAR = 'M-13 12L0 18L-7 27L-18 17ZM13 12L0 18L7 27L18 17Z';
 
-const introStyles = `
+    // Shared, outline-free artwork keeps the intro, HUD, and ending in one visual family.
+    function Heart({ x = 0, y = 0, size = 1, color = '#dc8c9c' }) {
+      return <path transform={`translate(${x} ${y}) scale(${size})`} d="M0 12C-30-6-15-27 0-13C15-27 30-6 0 12Z" fill={color} />;
+    }
+
+    function Flower({ x = 0, y = 0, size = 1, rose = false }) {
+      return <g transform={`translate(${x} ${y}) scale(${size})`}>
+        {Array.from({ length: rose ? 6 : 10 }, (_, i) => <ellipse key={i} cy={rose ? -12 : -23} rx={rose ? 21 : 10} ry={rose ? 20 : 18} fill={rose ? '#d9828e' : '#f5cb79'} transform={`rotate(${i * (rose ? 60 : 36)})`} />)}
+        <circle r={rose ? 22 : 21} fill={rose ? '#c66b7b' : '#b88761'} />
+        {rose ? <path d="M-12 0Q-12-14 2-11Q16-9 10 3Q7 11-3 6" fill="none" stroke="#e9a0a5" strokeWidth="6" strokeLinecap="round" /> : <g fill="#745b50"><circle cx="-6" cy="-2" r="2" /><circle cx="6" cy="-2" r="2" /><path d="M-4 5Q0 9 4 5" fill="none" stroke="#745b50" strokeWidth="2" strokeLinecap="round" /></g>}
+      </g>;
+    }
+
+    function Filler({ x, y, size = 1 }) {
+      return <g transform={`translate(${x} ${y}) scale(${size})`}>{[0, 72, 144, 216, 288].map(a => <ellipse key={a} cy="-8" rx="6" ry="8" fill="#fffaf0" transform={`rotate(${a})`} />)}<circle r="5" fill="#e9be72" /></g>;
+    }
+
+    function Leaf({ x, y, rotate = 0, size = 1 }) {
+      return <path transform={`translate(${x} ${y}) rotate(${rotate}) scale(${size})`} d="M0 0C-39-4-46-40-27-57C4-49 20-18 0 0Z" fill="#94b69b" />;
+    }
+
+    function Bouquet({ front = false }) {
+      return <svg viewBox="0 0 420 460" aria-hidden="true">
+        {front ? <>
+          <Leaf x={87} y={292} rotate={-65} /><Leaf x={333} y={293} rotate={100} />
+          <Flower x={101} y={244} size={.88} rose /><Flower x={305} y={253} size={.9} rose />
+          <Flower x={153} y={288} size={.95} /><Flower x={249} y={291} size={1.1} rose />
+          <Filler x={73} y={288} /><Filler x={335} y={306} /><Filler x={211} y={272} />
+          <path d="M82 310Q210 352 339 310L245 432Q210 453 176 432Z" fill="#c4d9bd" />
+          <path d="M210 342Q280 337 339 310L245 432Q223 442 210 442Z" fill="#a7c7a9" />
+          <path d="M186 400Q151 370 149 395Q148 419 199 409M228 401Q263 372 269 396Q273 418 221 410" fill="#e5a0a5" />
+          <path d="M199 409L182 441M221 409L240 441" stroke="#dc929d" strokeWidth="11" strokeLinecap="round" />
+          <rect x="194" y="396" width="32" height="22" rx="10" fill="#cf8191" />
+        </> : <>
+          <path d="M210 423L49 189Q50 167 73 177L210 225L347 177Q373 169 369 193Z" fill="#e2e8cf" />
+          {[[76, 212, -40], [110, 157, -20], [190, 139, 0], [278, 155, 65], [346, 219, 100], [64, 280, -75], [352, 283, 115]].map(([x, y, r], i) => <Leaf key={i} x={x} y={y} rotate={r} size={1.15} />)}
+          <path d="M210 410L105 164M210 410L203 137M210 410L310 176" stroke="#94b69b" strokeWidth="8" strokeLinecap="round" />
+          <Flower x={107} y={188} /><Flower x={212} y={145} size={1.08} /><Flower x={310} y={196} size={.9} />
+          <Flower x={161} y={216} size={1.05} rose /><Flower x={263} y={223} size={1.12} rose />
+          <Filler x={57} y={220} /><Filler x={153} y={137} /><Filler x={275} y={136} /><Filler x={356} y={239} />
+          <Filler x={197} y={236} size={.8} /><Filler x={124} y={287} size={.7} />
+        </>}
+      </svg>;
+    }
+
+    function Character({ girl = false, fallen = false, x = 0, y = 0, size = 1 }) {
+      const top = girl ? CHARACTER_STYLE.girlTop : CHARACTER_STYLE.guyTop;
+      return <g transform={`translate(${x} ${y}) scale(${size})`}>
+        {girl && <path d={CHARACTER_HAIR.girlBack} fill={CHARACTER_STYLE.hair} />}
+        <rect x="-20" y="40" width="16" height="25" rx="7" fill={CHARACTER_STYLE.pants} /><rect x="4" y="40" width="16" height="25" rx="7" fill={CHARACTER_STYLE.pants} />
+        <rect x="-23" y="59" width="21" height="10" rx="5" fill={CHARACTER_STYLE.shoes} /><rect x="2" y="59" width="21" height="10" rx="5" fill={CHARACTER_STYLE.shoes} />
+        <rect x="-27" y="9" width="54" height="42" rx="16" fill={top} />
+        <path d="M-19 22L-30 38M19 22L30 38" stroke={top} strokeWidth="15" strokeLinecap="round" />
+        <circle cy="-14" r="29" fill="#f2cfb8" />
+        <path d={girl ? CHARACTER_HAIR.girlFront : CHARACTER_HAIR.boy} fill={CHARACTER_STYLE.hair} />
+        <ellipse cx="-17" cy="-5" rx="6" ry="3.5" fill={CHARACTER_STYLE.blush} /><ellipse cx="17" cy="-5" rx="6" ry="3.5" fill={CHARACTER_STYLE.blush} />
+        <path d={fallen ? 'M-12-9h8M5-9h8M-3 2h6' : 'M-12-9q4-6 8 0M5-9q4-6 8 0M-4 0q4 5 8 0'} fill="none" stroke="#745c59" strokeWidth="2.5" strokeLinecap="round" />
+        {girl && <path d={GIRL_COLLAR} fill={CHARACTER_STYLE.collar} />}
+      </g>;
+    }
+
+    // Stylized flat-vector failed-catch scene; no anatomical injury details.
+    function FallenGirl() {
+      return <g>
+        <path d="M58 135C41 120 73 112 96 115C121 101 147 112 168 116C199 111 224 123 218 136C241 145 216 163 188 158C163 170 141 159 120 163C91 173 64 156 58 150C39 151 37 140 58 135Z" fill="#8b243b" />
+        <ellipse cx="49" cy="161" rx="9" ry="4" fill="#8b243b" /><ellipse cx="231" cy="146" rx="6" ry="3" fill="#8b243b" />
+        <g transform="translate(141 118) rotate(-90)"><Character girl fallen size={.95} /></g>
+      </g>;
+    }
+
+    function Icon({ name, size = 22 }) {
+      return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        {name === 'heart' ? <path fill="currentColor" stroke="none" d="M12 21C-5 10 3-3 12 5C21-3 29 10 12 21Z" /> : name === 'pause' ? <><path d="M8 5v14M16 5v14" /></> : name === 'play' ? <path d="m8 5 11 7-11 7Z" fill="currentColor" /> : name === 'home' ? <><rect x="3" y="5" width="18" height="14" rx="4" /><path d="m4 7 8 6 8-6" /></> : name === 'muted' ? <><path d="M11 4 5 9H2v6h3l6 5ZM16 9l6 6m0-6-6 6" /></> : <><path d="M11 4 5 9H2v6h3l6 5ZM16 8q5 4 0 8M19 4q9 8 0 16" /></>}
+      </svg>;
+    }
+
+
+
+    function OpenLetterModal({ onStartGame, onClose }) {
+      const letterRef = useRef(null);
+      useEffect(() => {
+        const previousFocus = document.activeElement;
+        letterRef.current?.focus();
+        const handleKey = e => {
+          if (e.key === 'Escape') onClose();
+          if (e.key !== 'Tab') return;
+          // Keep keyboard focus on the letter's two actions until it closes.
+          const controls = letterRef.current.querySelectorAll('button');
+          const first = controls[0], last = controls[controls.length - 1];
+          if (e.shiftKey && (document.activeElement === first || document.activeElement === letterRef.current)) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        };
+        document.addEventListener('keydown', handleKey);
+        return () => { document.removeEventListener('keydown', handleKey); previousFocus?.focus(); };
+      }, [onClose]);
+      const text = TEXT_CONTENT.letter;
+      // Portal to body: fixed backdrop must never inherit the intro's overflow
+      // clipping, isolation, or any animated bouquet transform.
+      return ReactDOM.createPortal(<div className="letter-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+        <section ref={letterRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="letter-title" className="designed-letter custom-scrollbar">
+          <button className="letter-close" onClick={onClose} aria-label={TEXT_CONTENT.controls.closeLetter}>{TEXT_CONTENT.symbols.close}</button>
+          <svg className="letter-flower" viewBox="-50 -50 100 100" aria-hidden="true"><Flower size={.8} /></svg>
+          <p className="eyebrow">{text.eyebrow}</p>
+          <h2 id="letter-title">{text.greeting}</h2>
+          {text.paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+          <p className="letter-script">{text.verse}</p>
+          <p>{text.invitation}</p>
+          <div className="letter-mission">{formatText(text.mission, { points: GAME_CONFIG.gameplay.roundTarget, seconds: GAME_CONFIG.gameplay.finaleSeconds })}<br /><span>{text.surprise}</span></div>
+          <button onClick={onStartGame} className="primary-button">{text.play}<span aria-hidden="true">{TEXT_CONTENT.symbols.arrow}</span></button>
+          <p className="letter-controls">{text.controls}</p>
+          <p className="letter-signoff">{text.signoff}</p>
+        </section>
+      </div>, document.body);
+    }
+
+    const introStyles = `
 *{box-sizing:border-box}
 button{font:inherit}
 button:focus-visible{outline:3px solid #a75468;outline-offset:5px}
@@ -619,559 +623,560 @@ body{margin:0;color:#6d5a60;font-family:Quicksand,sans-serif;background:#f8f1e9}
 @keyframes result-reveal{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 `;
 
-// Intro state machine: arriving -> tucked -> zooming -> launching -> interactive
-// -> opening -> opened. The envelope is removed from layout (hidden) until
-// the bouquet finishes its zoom, so no initial flash can expose it.
-// Closing the modal returns to interactive, without replaying the bouquet launch.
-function IntroScreen({ onStartGame, soundMuted, onToggleSound }) {
-  const [envelopeState, setEnvelopeState] = useState('arriving');
-  const envelopeRef = useRef(null);
-  const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  useEffect(() => {
-    if (envelopeState === 'interactive') envelopeRef.current?.focus({ preventScroll: true });
-    // animationend drives normal transitions. Timers also recover if a browser
-    // cancels an animation or reduced-motion settings change while it is running.
-    const transitions = {
-      arriving: ['tucked', GAME_CONFIG.intro.bouquetArrivalMs],
-      zooming: ['launching', GAME_CONFIG.intro.bouquetZoomMs],
-      launching: ['interactive', GAME_CONFIG.intro.launchMs],
-      opening: ['opened', GAME_CONFIG.intro.paperRevealMs],
-    };
-    if (!transitions[envelopeState]) return;
-    const [next, duration] = transitions[envelopeState];
+    // Intro state machine: arriving -> tucked -> zooming -> launching -> interactive
+    // -> opening -> opened. The envelope is removed from layout (hidden) until
+    // the bouquet finishes its zoom, so no initial flash can expose it.
+    // Closing the modal returns to interactive, without replaying the bouquet launch.
+    function IntroScreen({ onStartGame, soundMuted, onToggleSound }) {
+      const [envelopeState, setEnvelopeState] = useState('arriving');
+      const envelopeRef = useRef(null);
+      const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      useEffect(() => {
+        if (envelopeState === 'interactive') envelopeRef.current?.focus({ preventScroll: true });
+        // animationend drives normal transitions. Timers also recover if a browser
+        // cancels an animation or reduced-motion settings change while it is running.
+        const transitions = {
+          arriving: ['tucked', GAME_CONFIG.intro.bouquetArrivalMs],
+          zooming: ['launching', GAME_CONFIG.intro.bouquetZoomMs],
+          launching: ['interactive', GAME_CONFIG.intro.launchMs],
+          opening: ['opened', GAME_CONFIG.intro.paperRevealMs],
+        };
+        if (!transitions[envelopeState]) return;
+        const [next, duration] = transitions[envelopeState];
 
-    const timer = setTimeout(() => setEnvelopeState(next), reducedMotion() ? 0 : duration + 100);
-    return () => clearTimeout(timer);
-  }, [envelopeState]);
-  const closeLetter = React.useCallback(() => setEnvelopeState('interactive'), []);
-  const footer = TEXT_CONTENT.intro.footer[envelopeState];
-  return <div className="intro-scene">
-    <p className="intro-heading eyebrow">{TEXT_CONTENT.intro.eyebrow}</p>
-    <button className="intro-sound icon-button" onClick={onToggleSound} aria-label={soundMuted ? TEXT_CONTENT.controls.unmute : TEXT_CONTENT.controls.mute}><Icon name={soundMuted ? 'muted' : 'sound'}/></button>
-    <div className="intro-stack" data-state={envelopeState} style={{ '--bouquet-arrival': `${GAME_CONFIG.intro.bouquetArrivalMs}ms`, '--bouquet-zoom': `${GAME_CONFIG.intro.bouquetZoomMs}ms` }}>
-      <h1 className="intro-title">{TEXT_CONTENT.intro.title}</h1>
-      <div className="bouquet-layer bouquet-back"><Bouquet/></div>
-      <div className="envelope-track" data-state={envelopeState} hidden={!['launching', 'interactive', 'opening', 'opened'].includes(envelopeState)} style={{ '--paper-reveal': `${GAME_CONFIG.intro.paperRevealMs}ms`, animationDuration: envelopeState === 'launching' ? `${GAME_CONFIG.intro.launchMs}ms` : undefined }} onAnimationEnd={e => {
-        if (envelopeState === 'launching' && e.animationName === 'envelope-emerge') setEnvelopeState('interactive');
-        if (envelopeState === 'opening' && e.animationName === 'paper-reveal') setEnvelopeState('opened');
-      }}>
-        <button ref={envelopeRef} type="button" className={`soft-envelope ${envelopeState === 'interactive' ? 'is-ready' : ''} ${envelopeState === 'opening' ? 'is-opening' : ''}`} disabled={envelopeState !== 'interactive'} aria-label={TEXT_CONTENT.controls.openLetter} onClick={() => { sound.playEnvelopeOpen(); setEnvelopeState('opening'); }}>
-          <span className="envelope-back" aria-hidden="true"/>
-          <span className="envelope-paper" aria-hidden="true"><strong>{TEXT_CONTENT.intro.paperPreview}</strong><span>{TEXT_CONTENT.intro.paperNote}</span></span>
-          <span className="envelope-front" aria-hidden="true"><svg viewBox="0 0 200 128"><path d="M0 12L87 74Q100 85 113 74L200 12V110Q200 128 182 128H18Q0 128 0 110Z" fill="#fff1d6"/><path d="M0 119L83 66Q100 54 117 66L200 119Q200 128 182 128H18Q0 128 0 119Z" fill="#f3dfbd"/></svg></span>
-          <span className="envelope-lid" aria-hidden="true"><svg viewBox="0 0 200 128"><path d="M0 9Q0 0 18 0H182Q200 0 200 9L112 73Q100 82 88 73Z" fill="#fff7e5"/><circle cx="100" cy="74" r="17" fill="#dda0a5"/><Heart x={100} y={77} size={.48} color="#fff3e2"/></svg></span>
-          <span className="envelope-label">{TEXT_CONTENT.intro.envelopeLabel}</span>
-        </button>
-      </div>
-      <div className="bouquet-layer bouquet-front" onAnimationEnd={e => {
-        // Only the front layer advances the state; the back plays in sync.
-        if (envelopeState === 'arriving' && e.animationName === 'bouquet-arrive') setEnvelopeState('tucked');
-        if (envelopeState === 'zooming' && e.animationName === 'bouquet-zoom') setEnvelopeState('launching');
-      }}><Bouquet front/></div>
-      {envelopeState === 'tucked' && <button className="bouquet-trigger" aria-label={TEXT_CONTENT.controls.liftLetter} onClick={() => { sound.init(); sound.playCatch(1); setEnvelopeState('zooming'); }}>{TEXT_CONTENT.controls.liftLetter}</button>}
-    </div>
-    <div className="intro-footer" aria-live="polite"><strong>{footer[0]}</strong><small>{footer[1]}</small></div>
-    {envelopeState === 'opened' && <OpenLetterModal onStartGame={onStartGame} onClose={closeLetter}/>}
-  </div>;
-}
-
-
-
-const RULES = GAME_CONFIG.gameplay;
-const WIN_SCORE_TARGET = RULES.roundTarget;
-const FINALE_SECONDS = RULES.finaleSeconds;
-const FINALE_PAUSE = RULES.finalePause;
-const ITEM_TYPES = [
-  { id: 'sunflower', points: 15, color: '#edc575', weight: 35 },
-  { id: 'star', points: 20, color: '#eac77e', weight: 25 },
-  { id: 'heart', points: 10, color: '#dfa0ab', weight: 25 },
-  { id: 'sparkle', points: 25, color: '#b3a4cc', weight: 15 },
-  { id: 'cloud', points: 0, color: '#aab9c9', weight: 12 },
-  { id: 'sickness', points: 0, color: '#a6b991', weight: 8 },
-  { id: 'thorn', points: 0, color: '#bc9ba8', weight: 8 },
-];
-
-// Audio is decorative: unsupported/blocked Web Audio must never interrupt
-// collision handling or prevent a terminal state from reaching React.
-function playGameSound(method, ...args) {
-  try { sound[method](...args); }
-  catch { /* Continue rendering the game/result even when audio is unavailable. */ }
-}
-
-// The sprite is drawn around its center, so reserve its half-width at BOTH
-// edges. A stored uniform random fraction preserves the surprise on resize.
-function finalDropX(width, fraction) {
-  const padding = Math.min(width / 2, RULES.finalCharacterHalfWidth + RULES.finalDropEdgePadding);
-  return padding + fraction * Math.max(0, width - padding * 2);
-}
-
-function readBestScore() {
-  try { return Number(localStorage.getItem('smiley_highscore')) || 0; }
-  catch { return 0; }
-}
-
-function fillRound(ctx, x, y, width, height, radius, color) {
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.roundRect(x, y, width, height, radius);
-  ctx.fill();
-}
-
-function circle(ctx, x, y, radius, color) {
-  ctx.fillStyle = color;
-  ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
-}
-
-function drawHeart(ctx, x, y, size, color) {
-  ctx.save(); ctx.translate(x, y); ctx.scale(size, size);
-  ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(0, 12);
-  ctx.bezierCurveTo(-30, -6, -15, -27, 0, -13);
-  ctx.bezierCurveTo(15, -27, 30, -6, 0, 12); ctx.fill(); ctx.restore();
-}
-
-function drawCharacter(ctx, girl = false) {
-  const top = girl ? CHARACTER_STYLE.girlTop : CHARACTER_STYLE.guyTop;
-  ctx.save();
-  // Use the exact SVG silhouettes, collar and palette from the result artwork.
-  ctx.fillStyle = CHARACTER_STYLE.hair;
-  if (girl) ctx.fill(new Path2D(CHARACTER_HAIR.girlBack));
-  fillRound(ctx, -20, 40, 16, 25, 7, CHARACTER_STYLE.pants);
-  fillRound(ctx, 4, 40, 16, 25, 7, CHARACTER_STYLE.pants);
-  fillRound(ctx, -23, 59, 21, 10, 5, CHARACTER_STYLE.shoes);
-  fillRound(ctx, 2, 59, 21, 10, 5, CHARACTER_STYLE.shoes);
-  fillRound(ctx, -27, 9, 54, 42, 16, top);
-  ctx.strokeStyle = top; ctx.lineWidth = 15; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(-19, 22); ctx.lineTo(-30, 38); ctx.moveTo(19, 22); ctx.lineTo(30, 38); ctx.stroke();
-  circle(ctx, 0, -14, 29, '#f2cfb8');
-  ctx.fillStyle = CHARACTER_STYLE.hair;
-  ctx.fill(new Path2D(girl ? CHARACTER_HAIR.girlFront : CHARACTER_HAIR.boy));
-  ctx.fillStyle = CHARACTER_STYLE.blush;
-  for (const x of [-17, 17]) { ctx.beginPath(); ctx.ellipse(x, -5, 6, 3.5, 0, 0, Math.PI * 2); ctx.fill(); }
-  ctx.strokeStyle = '#745c59'; ctx.lineWidth = 2.5;
-  ctx.beginPath(); ctx.moveTo(-12, -9); ctx.quadraticCurveTo(-8, -15, -4, -9);
-  ctx.moveTo(5, -9); ctx.quadraticCurveTo(9, -15, 13, -9);
-  ctx.moveTo(-4, 0); ctx.quadraticCurveTo(0, 5, 4, 0); ctx.stroke();
-  if (girl) { ctx.fillStyle = CHARACTER_STYLE.collar; ctx.fill(new Path2D(GIRL_COLLAR)); }
-  ctx.restore();
-}
-
-function drawItem(ctx, item) {
-  ctx.save(); ctx.translate(item.x, item.y); ctx.rotate(item.angle || 0);
-  const id = item.id;
-  if (id === 'girl') { ctx.scale(item.scale ?? 1, item.scale ?? 1); drawCharacter(ctx, true); }
-  else if (id === 'heart') drawHeart(ctx, 0, 3, .9, item.color);
-  else if (id === 'sunflower') {
-    for (let i = 0; i < 10; i++) {
-      ctx.save(); ctx.rotate(i * Math.PI / 5); ctx.fillStyle = '#f5cb79';
-      ctx.beginPath(); ctx.ellipse(0, -16, 6, 12, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+        const timer = setTimeout(() => setEnvelopeState(next), reducedMotion() ? 0 : duration + 100);
+        return () => clearTimeout(timer);
+      }, [envelopeState]);
+      const closeLetter = React.useCallback(() => setEnvelopeState('interactive'), []);
+      const footer = TEXT_CONTENT.intro.footer[envelopeState];
+      return <div className="intro-scene">
+        <p className="intro-heading eyebrow">{TEXT_CONTENT.intro.eyebrow}</p>
+        <button className="intro-sound icon-button" onClick={onToggleSound} aria-label={soundMuted ? TEXT_CONTENT.controls.unmute : TEXT_CONTENT.controls.mute}><Icon name={soundMuted ? 'muted' : 'sound'} /></button>
+        <div className="intro-stack" data-state={envelopeState} style={{ '--bouquet-arrival': `${GAME_CONFIG.intro.bouquetArrivalMs}ms`, '--bouquet-zoom': `${GAME_CONFIG.intro.bouquetZoomMs}ms` }}>
+          <h1 className="intro-title">{TEXT_CONTENT.intro.title}</h1>
+          <div className="bouquet-layer bouquet-back"><Bouquet /></div>
+          <div className="envelope-track" data-state={envelopeState} hidden={!['launching', 'interactive', 'opening', 'opened'].includes(envelopeState)} style={{ '--paper-reveal': `${GAME_CONFIG.intro.paperRevealMs}ms`, animationDuration: envelopeState === 'launching' ? `${GAME_CONFIG.intro.launchMs}ms` : undefined }} onAnimationEnd={e => {
+            if (envelopeState === 'launching' && e.animationName === 'envelope-emerge') setEnvelopeState('interactive');
+            if (envelopeState === 'opening' && e.animationName === 'paper-reveal') setEnvelopeState('opened');
+          }}>
+            <button ref={envelopeRef} type="button" className={`soft-envelope ${envelopeState === 'interactive' ? 'is-ready' : ''} ${envelopeState === 'opening' ? 'is-opening' : ''}`} disabled={envelopeState !== 'interactive'} aria-label={TEXT_CONTENT.controls.openLetter} onClick={() => { sound.playEnvelopeOpen(); setEnvelopeState('opening'); }}>
+              <span className="envelope-back" aria-hidden="true" />
+              <span className="envelope-paper" aria-hidden="true"><strong>{TEXT_CONTENT.intro.paperPreview}</strong><span>{TEXT_CONTENT.intro.paperNote}</span></span>
+              <span className="envelope-front" aria-hidden="true"><svg viewBox="0 0 200 128"><path d="M0 12L87 74Q100 85 113 74L200 12V110Q200 128 182 128H18Q0 128 0 110Z" fill="#fff1d6" /><path d="M0 119L83 66Q100 54 117 66L200 119Q200 128 182 128H18Q0 128 0 119Z" fill="#f3dfbd" /></svg></span>
+              <span className="envelope-lid" aria-hidden="true"><svg viewBox="0 0 200 128"><path d="M0 9Q0 0 18 0H182Q200 0 200 9L112 73Q100 82 88 73Z" fill="#fff7e5" /><circle cx="100" cy="74" r="17" fill="#dda0a5" /><Heart x={100} y={77} size={.48} color="#fff3e2" /></svg></span>
+              <span className="envelope-label">{TEXT_CONTENT.intro.envelopeLabel}</span>
+            </button>
+          </div>
+          <div className="bouquet-layer bouquet-front" onAnimationEnd={e => {
+            // Only the front layer advances the state; the back plays in sync.
+            if (envelopeState === 'arriving' && e.animationName === 'bouquet-arrive') setEnvelopeState('tucked');
+            if (envelopeState === 'zooming' && e.animationName === 'bouquet-zoom') setEnvelopeState('launching');
+          }}><Bouquet front /></div>
+          {envelopeState === 'tucked' && <button className="bouquet-trigger" aria-label={TEXT_CONTENT.controls.liftLetter} onClick={() => { sound.init(); sound.playCatch(1); setEnvelopeState('zooming'); }}>{TEXT_CONTENT.controls.liftLetter}</button>}
+        </div>
+        <div className="intro-footer" aria-live="polite"><strong>{footer[0]}</strong><small>{footer[1]}</small></div>
+        {envelopeState === 'opened' && <OpenLetterModal onStartGame={onStartGame} onClose={closeLetter} />}
+      </div>;
     }
-    circle(ctx, 0, 0, 13, '#b88761');
-    circle(ctx, -4, -1, 1.5, '#745b50'); circle(ctx, 4, -1, 1.5, '#745b50');
-    ctx.strokeStyle = '#745b50'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(0, 2, 3, 0, Math.PI); ctx.stroke();
-  } else if (id === 'star' || id === 'sparkle') {
-    const count = id === 'star' ? 5 : 4;
-    ctx.fillStyle = item.color; ctx.beginPath();
-    for (let i = 0; i < count * 2; i++) {
-      const a = i * Math.PI / count - Math.PI / 2, r = i % 2 ? 10 : 24;
-      const x = Math.cos(a) * r, y = Math.sin(a) * r;
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+
+
+
+    const RULES = GAME_CONFIG.gameplay;
+    const WIN_SCORE_TARGET = RULES.roundTarget;
+    const FINALE_SECONDS = RULES.finaleSeconds;
+    const FINALE_PAUSE = RULES.finalePause;
+    const ITEM_TYPES = [
+      { id: 'sunflower', points: 15, color: '#edc575', weight: 35 },
+      { id: 'star', points: 20, color: '#eac77e', weight: 25 },
+      { id: 'heart', points: 10, color: '#dfa0ab', weight: 25 },
+      { id: 'sparkle', points: 25, color: '#b3a4cc', weight: 15 },
+      { id: 'cloud', points: 0, color: '#aab9c9', weight: 12 },
+      { id: 'sickness', points: 0, color: '#a6b991', weight: 8 },
+      { id: 'thorn', points: 0, color: '#bc9ba8', weight: 8 },
+    ];
+
+    // Audio is decorative: unsupported/blocked Web Audio must never interrupt
+    // collision handling or prevent a terminal state from reaching React.
+    function playGameSound(method, ...args) {
+      try { sound[method](...args); }
+      catch { /* Continue rendering the game/result even when audio is unavailable. */ }
     }
-    ctx.closePath(); ctx.fill();
-  } else if (id === 'cloud') {
-    fillRound(ctx, -25, -4, 50, 23, 12, item.color);
-    circle(ctx, -11, -6, 12, item.color); circle(ctx, 6, -11, 16, item.color);
-    circle(ctx, -7, 4, 1.8, '#788898'); circle(ctx, 8, 4, 1.8, '#788898');
-    ctx.strokeStyle = '#91a9bf'; ctx.lineWidth = 3; ctx.lineCap = 'round';
-    for (const x of [-12, 1, 14]) { ctx.beginPath(); ctx.moveTo(x, 24); ctx.lineTo(x - 3, 30); ctx.stroke(); }
-  } else if (id === 'sickness') {
-    ctx.strokeStyle = item.color; ctx.lineWidth = 4; ctx.lineCap = 'round';
-    for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; ctx.beginPath(); ctx.moveTo(Math.cos(a) * 12, Math.sin(a) * 12); ctx.lineTo(Math.cos(a) * 24, Math.sin(a) * 24); ctx.stroke(); }
-    circle(ctx, 0, 0, 17, item.color); circle(ctx, -5, -3, 3, '#cfdbb9'); circle(ctx, 6, 6, 4, '#cfdbb9');
-  } else {
-    ctx.strokeStyle = '#a1b29a'; ctx.lineWidth = 4; ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.moveTo(0, 23); ctx.quadraticCurveTo(15, 0, 0, -8); ctx.stroke();
-    circle(ctx, -4, -10, 15, item.color); circle(ctx, 4, -8, 12, '#d3b3bd');
-  }
-  ctx.restore();
-}
 
-function drawMeadow(ctx, width, height) {
-  ctx.fillStyle = '#fbf3e7'; ctx.fillRect(0, 0, width, height);
-  circle(ctx, width * .82, height * .21, 48, '#f5dfaa');
-  circle(ctx, width * .82 - 10, height * .21 - 2, 2.5, '#bc9c74');
-  circle(ctx, width * .82 + 10, height * .21 - 2, 2.5, '#bc9c74');
-  ctx.strokeStyle = '#bc9c74'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(width * .82, height * .21 + 6, 6, 0, Math.PI); ctx.stroke();
-  ctx.fillStyle = '#e5ead4'; ctx.beginPath(); ctx.moveTo(0, height);
-  ctx.lineTo(0, height - 140); ctx.quadraticCurveTo(width * .3, height - 260, width, height - 110); ctx.lineTo(width, height); ctx.fill();
-  ctx.fillStyle = '#d5e2c8'; ctx.beginPath(); ctx.moveTo(0, height);
-  ctx.lineTo(0, height - 90); ctx.quadraticCurveTo(width * .7, height - 200, width, height - 105); ctx.lineTo(width, height); ctx.fill();
-  for (let i = 0; i < 14; i++) {
-    const x = ((i * 173 + 45) % width), y = height - 18 - (i % 4) * 21;
-    for (let j = 0; j < 5; j++) circle(ctx, x + Math.cos(j * Math.PI * .4) * 4, y + Math.sin(j * Math.PI * .4) * 4, 3.3, '#fff9e9');
-    circle(ctx, x, y, 2.5, '#dec283');
-  }
-}
+    // The sprite is drawn around its center, so reserve its half-width at BOTH
+    // edges. A stored uniform random fraction preserves the surprise on resize.
+    function finalDropX(width, fraction) {
+      const padding = Math.min(width / 2, RULES.finalCharacterHalfWidth + RULES.finalDropEdgePadding);
+      return padding + fraction * Math.max(0, width - padding * 2);
+    }
 
-// Screen-level narrator UI: no player coordinates, canvas text metrics, or
-// collision geometry are involved. One keyed card replaces the previous note.
-function NarratorMessage({ message, paused = false }) {
-  if (!message) return null;
-  return <aside className="narrator-anchor" aria-live="polite" aria-atomic="true" style={{ visibility: paused ? 'hidden' : undefined }}>
-    <div key={message.id} className="narrator-card" style={{ animationDuration: `${RULES.narratorSeconds}s`, animationPlayState: paused ? 'paused' : 'running', '--narrator-rise': `${RULES.narratorRise}px` }}>
-      <span className="narrator-speaker"><Icon name="heart" size={14}/>{TEXT_CONTENT.game.narratorLabel}</span>
-      <p>{message.text}</p>
-    </div>
-  </aside>;
-}
+    function readBestScore() {
+      try { return Number(localStorage.getItem('smiley_highscore')) || 0; }
+      catch { return 0; }
+    }
 
-function CatchingGame({ level = 1, initialScore = 0, onGameEnd, onBackToIntro, soundMuted, onToggleSound }) {
-  const canvasRef = useRef(null);
-  const stateRef = useRef(null);
-  const endRef = useRef(onGameEnd);
-  endRef.current = onGameEnd;
-  const [hud, setHud] = useState({ score: initialScore, roundScore: 0, lives: RULES.lives, combo: 1, remaining: FINALE_SECONDS, finale: null, countdown: RULES.countdown });
-  const [narrator, setNarrator] = useState(null);
-  const [isPaused, setIsPaused] = useState(false);
-  const pausedRef = useRef(false);
-  const togglePause = () => { pausedRef.current = !pausedRef.current; setIsPaused(pausedRef.current); };
+    function fillRound(ctx, x, y, width, height, radius, color) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.roundRect(x, y, width, height, radius);
+      ctx.fill();
+    }
 
-  useEffect(() => {
-    const canvas = canvasRef.current, ctx = canvas.getContext('2d');
-    // Each remount starts a round, preserving only the parent's total and level.
-    // Replay speed and spawn frequency compound independently: level 2 is
-    // 1.6x as fast and spawns 1.55x as often; level 3 is 2.56x / 2.40x.
-    // Hazard weights also rise, while the total score stays in the parent.
-    const difficultyMultiplier = RULES.speedMultiplierPerLevel ** (level - 1);
-    const spawnMultiplier = RULES.spawnMultiplierPerLevel ** (level - 1);
-    const hazardMultiplier = 1 + (level - 1) * RULES.hazardStepPerLevel;
-    const state = {
-      width: 0, height: 0, elapsed: 0, countdown: RULES.countdown, spawnTimer: .3 / spawnMultiplier,
-      score: initialScore, startingScore: initialScore, level, difficultyMultiplier, spawnMultiplier, hazardMultiplier, lives: RULES.lives, combo: 1, active: true, finale: null, finaleTimer: 0,
-      items: [], particles: [], narrator: null, narratorId: 0, lastNarratorText: null, damage: 0, keys: { left: false, right: false },
-      player: { x: 0, targetX: 0, y: 0 },
-      stats: { sunflowers: 0, stars: 0, hearts: 0, sparkles: 0, maxCombo: 1 },
-    };
-    stateRef.current = state;
-    const publish = () => setHud({ score: state.score, roundScore: state.score - state.startingScore, lives: state.lives, combo: state.combo, remaining: Math.max(0, Math.ceil(FINALE_SECONDS - state.elapsed)), finale: state.finale, countdown: Math.max(0, Math.ceil(state.countdown)) });
-    const resize = () => {
-      // Physics stays in CSS pixels; only the backing buffer scales for Retina.
-      const { width, height } = canvas.getBoundingClientRect();
-      const previousWidth = state.width || width;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      state.player.x = state.width ? state.player.x / previousWidth * width : width / 2;
-      state.player.targetX = state.player.x;
-      state.width = width; state.height = height; state.player.y = height - 110;
-      state.items.forEach(item => {
-        if (item.id === 'girl') {
-          item.x = finalDropX(width, item.dropFraction ?? item.x / previousWidth);
-          item.scale = Math.min(1, width / (RULES.finalCharacterHalfWidth * 2));
-        } else item.x = item.x / previousWidth * width;
-      });
-    };
-    resize();
-    const setKey = (e, pressed) => {
-      if (!state.active) return;
-      if (['ArrowLeft', 'ArrowRight', 'a', 'A', 'd', 'D'].includes(e.key)) {
-        e.preventDefault(); state.keys[['ArrowLeft', 'a', 'A'].includes(e.key) ? 'left' : 'right'] = pressed;
-      }
-      if (pressed && !e.repeat && ['Escape', 'p', 'P'].includes(e.key)) togglePause();
-    };
-    const keyDown = e => setKey(e, true), keyUp = e => setKey(e, false);
-    const blur = () => { state.keys.left = false; state.keys.right = false; if (state.active) { pausedRef.current = true; setIsPaused(true); } };
-    const visibility = () => { if (document.hidden) blur(); };
-    window.addEventListener('resize', resize); window.addEventListener('keydown', keyDown); window.addEventListener('keyup', keyUp);
-    window.addEventListener('blur', blur); document.addEventListener('visibilitychange', visibility);
-    // Terminal transition: active -> win/lose/missed-catch. Mark inactive BEFORE notifying
-    // React so no later frame can score, finish twice, or emit another bubble.
-    let animationId = null;
-    const finish = status => {
-      if (!state.active) return;
-      state.active = false;
-      state.narrator = null; setNarrator(null);
-      cancelAnimationFrame(animationId);
-      animationId = null;
-      state.keys.left = false; state.keys.right = false;
-      const isNewBest = state.score > readBestScore();
-      if (isNewBest) { try { localStorage.setItem('smiley_highscore', String(state.score)); } catch { /* Private browsing may disable storage. */ } }
-      // Commit the result first; a failed sound must never leave a frozen canvas.
-      endRef.current({ status, level, finalScore: state.score, roundScore: state.score - state.startingScore, maxCombo: state.stats.maxCombo, stats: { ...state.stats }, isNewBest });
-      playGameSound('stopBgm');
-      playGameSound(status === 'win' ? 'playVictory' : 'playDefeat');
-    };
-    // Round state machine: normal (null) -> waiting -> falling -> win.
-    // Missing the girl ends the round as missed-catch; losing all lives in normal
-    // ends it as lose. These are separate terminal outcomes, with separate UI.
-    // Clear every normal item/effect atomically so hazards cannot hit in finale.
-    const beginFinale = () => {
-      if (state.finale) return;
-      state.finale = 'waiting'; state.finaleTimer = 0;
-      state.items = []; state.particles = []; state.narrator = null; setNarrator(null); state.damage = 0; publish();
-    };
-    const spawnGirl = () => {
-      state.finale = 'falling';
-      // Use the highest possible ordinary speed in this round, plus 18%. The
-      // final drop is always faster, even on tall screens or an early score win.
-      const dropFraction = Math.random();
-      state.items = [{ id: 'girl', dropFraction, x: finalDropX(state.width, dropFraction), scale: Math.min(1, state.width / (RULES.finalCharacterHalfWidth * 2)), y: -75, angle: 0, speed: (RULES.baseSpeed + RULES.speedVariation + FINALE_SECONDS * RULES.speedPerSecond) * difficultyMultiplier * RULES.girlSpeedBoost }];
-      publish();
-    };
-    const spawnItem = () => {
-      // Positive weights stay fixed while hazards gain weight on every level.
-      const itemWeight = item => item.weight * (item.points > 0 ? 1 : hazardMultiplier);
-      let weight = Math.random() * ITEM_TYPES.reduce((sum, item) => sum + itemWeight(item), 0);
-      const type = ITEM_TYPES.find(item => { weight -= itemWeight(item); return weight < 0; }) || ITEM_TYPES[0];
-      state.items.push({ ...type, x: 35 + Math.random() * Math.max(1, state.width - 70), y: -35, speed: (RULES.baseSpeed + Math.random() * RULES.speedVariation + state.elapsed * RULES.speedPerSecond) * difficultyMultiplier, angle: 0, phase: Math.random() * Math.PI * 2 });
-    };
-    let lastTime = null, lastSecond = FINALE_SECONDS;
-    const frame = now => {
-      if (!state.active) return;
-      // Seconds-based integration keeps spawn/narrator/fall timing consistent
-      // across refresh rates. Cap large gaps so background throttling cannot
-      // teleport items past the catcher on the next visible frame.
-      const dt = lastTime === null ? 0 : Math.min((now - lastTime) / 1000, .05);
-      lastTime = now;
-      // Guard zero/negative health independently of the collision branch.
-      if (state.lives <= 0) { finish('lose'); return; }
-      if (!pausedRef.current) {
-        if (state.countdown > 0) {
-          const previous = Math.ceil(state.countdown); state.countdown = Math.max(0, state.countdown - dt);
-          if (previous !== Math.ceil(state.countdown)) publish();
-        } else {
-          const player = state.player;
-          state.elapsed += dt; state.damage = Math.max(0, state.damage - dt);
-          if (!state.finale && state.elapsed >= FINALE_SECONDS) beginFinale();
-          if (state.finale === 'waiting') { state.finaleTimer += dt; if (state.finaleTimer >= FINALE_PAUSE) spawnGirl(); }
-          if (state.keys.left || state.keys.right) player.targetX += ((state.keys.right ? 1 : 0) - (state.keys.left ? 1 : 0)) * 460 * dt;
-          player.targetX = Math.max(38, Math.min(state.width - 38, player.targetX));
-          player.x += (player.targetX - player.x) * (1 - Math.exp(-16 * dt));
-          if (!state.finale) { state.spawnTimer -= dt; if (state.spawnTimer <= 0) { spawnItem(); state.spawnTimer = RULES.spawnInterval / spawnMultiplier; } }
-          for (let i = state.items.length - 1; i >= 0; i--) {
-            const item = state.items[i], previousY = item.y;
-            item.y += item.speed * dt;
-            if (item.id !== 'girl') { item.x += Math.sin(state.elapsed * 2 + item.phase) * 16 * dt; item.angle = Math.sin(state.elapsed + item.phase) * .15; }
-            // Swept vertical collision: test the segment from previousY to the
-            // new Y against the basket band, not just the current point. This
-            // catches fast items even if one frame crosses the entire band.
-            // Horizontal tolerance is wider for the girl's larger silhouette.
-            const catchY = player.y + 15;
-            const inReach = Math.abs(item.x - player.x) < (item.id === 'girl' ? 54 : 43);
-            if (inReach && item.y >= catchY - 25 && previousY <= catchY + 25) {
-              if (item.id === 'girl') { state.items = []; finish('win'); return; }
-              if (item.points > 0) {
-                state.score += item.points * state.combo; state.combo = Math.min(8, state.combo + 1);
-                state.stats.maxCombo = Math.max(state.stats.maxCombo, state.combo);
-                state.stats[{ sunflower: 'sunflowers', star: 'stars', heart: 'hearts', sparkle: 'sparkles' }[item.id]]++;
-                playGameSound('playCatch', state.combo);
-                // Bea narrates only level 1. A new catch replaces the single
-                // active card and restarts its pop/float/fade animation, so a
-                // rapid streak never stacks competing text. Avoid repeating
-                // the previous line when multiple configured choices exist.
-                if (level === 1) {
-                  const messages = TEXT_CONTENT.game.narratorMessages;
-                  const alternatives = messages.filter(text => text !== state.lastNarratorText);
-                  const choices = alternatives.length ? alternatives : messages;
-                  if (choices.length) {
-                    const text = choices[Math.floor(Math.random() * choices.length)];
-                    state.lastNarratorText = text;
-                    state.narrator = { id: ++state.narratorId, text, age: 0 };
-                    setNarrator(state.narrator);
-                  }
-                }
+    function circle(ctx, x, y, radius, color) {
+      ctx.fillStyle = color;
+      ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
+    }
 
-                for (let j = 0; j < 9; j++) state.particles.push({ x: item.x, y: item.y, vx: (Math.random() - .5) * 120, vy: -30 - Math.random() * 90, life: .7, color: item.color });
-                if (state.score - state.startingScore >= WIN_SCORE_TARGET) { beginFinale(); break; }
-              } else {
-                state.lives--; state.combo = 1; state.damage = .3; playGameSound('playHurt');
-                if (state.lives <= 0) { finish('lose'); return; }
-              }
-              state.items.splice(i, 1); publish();
-            } else if (item.id === 'girl' && item.y > state.height) {
-              // A final miss is terminal the instant her origin crosses the
-              // canvas bottom. Do not retry, deduct hearts, or reset the score.
-              state.items = [];
-              finish('missed-catch');
-              return;
-            } else if (item.y > state.height + 80) {
-              if (item.points > 0 && state.combo > 1) { state.combo = 1; publish(); }
-              state.items.splice(i, 1);
-            }
-          }
-          // Expiry uses simulation seconds so pausing freezes the lifetime too.
-          // React only updates on catch or dismissal, never once per frame.
-          if (state.narrator) {
-            state.narrator.age += dt;
-            if (state.narrator.age >= RULES.narratorSeconds) {
-              state.narrator = null;
-              setNarrator(null);
-            }
-          }
-          state.particles = state.particles.filter(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt; return p.life > 0; });
-          const second = Math.max(0, Math.ceil(FINALE_SECONDS - state.elapsed));
-          if (second !== lastSecond) { lastSecond = second; publish(); }
-        }
-      }
-      drawMeadow(ctx, state.width, state.height);
-      state.items.forEach(item => drawItem(ctx, item));
-      state.particles.forEach(p => { ctx.globalAlpha = p.life / .7; circle(ctx, p.x, p.y, 4, p.color); }); ctx.globalAlpha = 1;
-      ctx.save(); ctx.translate(state.player.x, state.player.y);
-      ctx.fillStyle = '#a0b18d35'; ctx.beginPath(); ctx.ellipse(0, 66, 40, 8, 0, 0, Math.PI * 2); ctx.fill();
-      drawCharacter(ctx);
-      fillRound(ctx, -30, 27, 60, 24, 10, '#d2ae86');
-      ctx.strokeStyle = '#e9c9a2'; ctx.lineWidth = 2;
-      for (const y of [33, 41]) { ctx.beginPath(); ctx.moveTo(-25, y); ctx.lineTo(25, y); ctx.stroke(); }
-      for (const x of [-18, -6, 6, 18]) { ctx.beginPath(); ctx.moveTo(x, 30); ctx.lineTo(x, 47); ctx.stroke(); }
+    function drawHeart(ctx, x, y, size, color) {
+      ctx.save(); ctx.translate(x, y); ctx.scale(size, size);
+      ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(0, 12);
+      ctx.bezierCurveTo(-30, -6, -15, -27, 0, -13);
+      ctx.bezierCurveTo(15, -27, 30, -6, 0, 12); ctx.fill(); ctx.restore();
+    }
+
+    function drawCharacter(ctx, girl = false) {
+      const top = girl ? CHARACTER_STYLE.girlTop : CHARACTER_STYLE.guyTop;
+      ctx.save();
+      // Use the exact SVG silhouettes, collar and palette from the result artwork.
+      ctx.fillStyle = CHARACTER_STYLE.hair;
+      if (girl) ctx.fill(new Path2D(CHARACTER_HAIR.girlBack));
+      fillRound(ctx, -20, 40, 16, 25, 7, CHARACTER_STYLE.pants);
+      fillRound(ctx, 4, 40, 16, 25, 7, CHARACTER_STYLE.pants);
+      fillRound(ctx, -23, 59, 21, 10, 5, CHARACTER_STYLE.shoes);
+      fillRound(ctx, 2, 59, 21, 10, 5, CHARACTER_STYLE.shoes);
+      fillRound(ctx, -27, 9, 54, 42, 16, top);
+      ctx.strokeStyle = top; ctx.lineWidth = 15; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(-19, 22); ctx.lineTo(-30, 38); ctx.moveTo(19, 22); ctx.lineTo(30, 38); ctx.stroke();
+      circle(ctx, 0, -14, 29, '#f2cfb8');
+      ctx.fillStyle = CHARACTER_STYLE.hair;
+      ctx.fill(new Path2D(girl ? CHARACTER_HAIR.girlFront : CHARACTER_HAIR.boy));
+      ctx.fillStyle = CHARACTER_STYLE.blush;
+      for (const x of [-17, 17]) { ctx.beginPath(); ctx.ellipse(x, -5, 6, 3.5, 0, 0, Math.PI * 2); ctx.fill(); }
+      ctx.strokeStyle = '#745c59'; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(-12, -9); ctx.quadraticCurveTo(-8, -15, -4, -9);
+      ctx.moveTo(5, -9); ctx.quadraticCurveTo(9, -15, 13, -9);
+      ctx.moveTo(-4, 0); ctx.quadraticCurveTo(0, 5, 4, 0); ctx.stroke();
+      if (girl) { ctx.fillStyle = CHARACTER_STYLE.collar; ctx.fill(new Path2D(GIRL_COLLAR)); }
       ctx.restore();
-      if (state.damage > 0) { ctx.fillStyle = `rgba(218,151,161,${state.damage * .6})`; ctx.fillRect(0, 0, state.width, state.height); }
-      if (state.active) animationId = requestAnimationFrame(frame);
-    };
-    animationId = requestAnimationFrame(frame);
-    return () => {
-      // One effect owns all animation/listeners. Remounting for a harder round
-      // disposes the previous loop before the new state starts.
-      state.active = false; cancelAnimationFrame(animationId);
-      window.removeEventListener('resize', resize); window.removeEventListener('keydown', keyDown); window.removeEventListener('keyup', keyUp);
-      window.removeEventListener('blur', blur); document.removeEventListener('visibilitychange', visibility);
-    };
-  }, []);
-
-  const move = e => {
-    if (!stateRef.current || pausedRef.current) return;
-    const rect = canvasRef.current.getBoundingClientRect();
-    stateRef.current.player.targetX = e.clientX - rect.left;
-  };
-  const backToIntro = () => onBackToIntro({ score: stateRef.current?.score ?? initialScore });
-  const text = TEXT_CONTENT.game;
-  const controls = TEXT_CONTENT.controls;
-  return <div className="game-screen" onPointerMove={move} onPointerDown={e => { if (e.target === canvasRef.current) { e.currentTarget.setPointerCapture(e.pointerId); move(e); } }}>
-    <canvas ref={canvasRef} style={{ width: '100%', height: '100%', display: 'block' }} aria-label={text.canvasLabel}/>
-    <div className="game-hud">
-      <div className="hud-card"><div className="score-line" aria-label={formatText(text.totalScore, { score: hud.score })}><svg width="28" height="28" viewBox="-30 -30 60 60" aria-hidden="true"><circle r="26" fill="#f5cb79"/><circle r="16" fill="#b88761"/></svg>{hud.score}<small>{formatText(text.levelProgress, { level, points: hud.roundScore, target: WIN_SCORE_TARGET })}<br/>{hud.finale ? text.lastCatch : formatText(text.remaining, { seconds: hud.remaining })}</small></div><div className="score-progress"><span style={{ width: `${Math.min(100, Math.max(hud.roundScore / WIN_SCORE_TARGET, (FINALE_SECONDS - hud.remaining) / FINALE_SECONDS) * 100)}%` }}/></div></div>
-      <div className="hud-card hud-lives" aria-label={formatText(text.lives, { count: hud.lives })}>{Array.from({ length: RULES.lives }, (_, i) => <span key={i} style={{ opacity: i < hud.lives ? 1 : .2 }}><Icon name="heart"/></span>)}</div>
-      <div className="game-actions"><button className="icon-button" onClick={togglePause} aria-label={isPaused ? controls.resume : controls.pause}><Icon name={isPaused ? 'play' : 'pause'}/></button><button className="icon-button" onClick={onToggleSound} aria-label={soundMuted ? controls.unmute : controls.mute}><Icon name={soundMuted ? 'muted' : 'sound'}/></button><button className="icon-button" onClick={backToIntro} aria-label={controls.returnToLetter}><Icon name="home"/></button></div>
-    </div>
-    <NarratorMessage message={narrator} paused={isPaused}/>
-    {hud.finale && <div className="finale-message" role="status"><h2>{hud.finale === 'waiting' ? text.waitingTitle : text.fallingTitle}</h2><p>{hud.finale === 'waiting' ? text.waitingCopy : text.fallingCopy}</p></div>}
-    <div className="game-guidance">{hud.combo > 1 && !hud.finale ? formatText(text.streak, { combo: hud.combo }) : ''}{text.controls}</div>
-    {hud.countdown > 0 && !isPaused && <div className="game-overlay" role="status"><p className="eyebrow">{text.countdownTitle}</p><h2>{hud.countdown}</h2><p>{text.countdownCopy}</p></div>}
-    {isPaused && <div className="game-overlay"><h2>{text.pauseTitle}</h2><p>{text.pauseCopy}</p><button className="primary-button" onClick={togglePause}>{text.resume}<Icon name="play" size={16}/></button><button className="secondary-button" onClick={backToIntro}>{text.back}</button></div>}
-  </div>;
-}
-
-
-
-function GameOverModal({ status, level = 1, finalScore = 0, maxCombo = 1, stats = {}, isNewBest, onPlayAgain, onBackToIntro }) {
-  const isWin = status === 'win';
-  const isMissedCatch = status === 'missed-catch';
-  const text = TEXT_CONTENT.result;
-  const cardRef = useRef(null);
-  useEffect(() => {
-    const previousFocus = document.activeElement;
-    cardRef.current?.focus();
-    const keyDown = event => {
-      if (event.key !== 'Tab' || !cardRef.current) return;
-      const buttons = cardRef.current.querySelectorAll('button');
-      const first = buttons[0], last = buttons[buttons.length - 1];
-      if (event.shiftKey && (document.activeElement === first || document.activeElement === cardRef.current)) { event.preventDefault(); last.focus(); }
-      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
-    };
-    document.addEventListener('keydown', keyDown);
-    return () => { document.removeEventListener('keydown', keyDown); previousFocus?.focus(); };
-  }, []);
-  useEffect(() => {
-    if (isWin && window.confetti && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      window.confetti({ particleCount: 70, spread: 75, origin: { y: .6 }, colors: ['#e4acb3', '#f1d195', '#b7cdb1', '#c1b2d4'], disableForReducedMotion: true });
     }
-  }, [isWin]);
-  // A body portal and fixed positioning put every result above the stopped
-  // canvas, regardless of parent overflow or stacking contexts.
-  return ReactDOM.createPortal(<main className="result-screen">
-    <section ref={cardRef} tabIndex={-1} role="dialog" aria-modal="true" className="result-card" data-status={status} aria-labelledby="result-title">
-      <p className="eyebrow">{isWin ? text.winEyebrow : isMissedCatch ? text.missedEyebrow : text.loseEyebrow}</p>
-      <svg className="result-art" viewBox="0 0 280 200" role="img" aria-label={isWin ? text.winArt : isMissedCatch ? text.missedArt : text.loseArt}>
-        <ellipse cx="140" cy="104" rx="91" ry="83" fill={isWin ? '#f6e4df' : '#e9e9e3'}/>
-        {isWin ? <>
-          <ellipse cx="140" cy="183" rx="72" ry="8" fill="#dec9c330"/>
-          {/* Separate, upright silhouettes: two happy people celebrating together. */}
-          <Character x={94} y={116} size={.95}/><Character girl x={186} y={116} size={.95}/>
-          <g fill="#e2bd7c"><circle cx="56" cy="44" r="4"/><circle cx="226" cy="64" r="3"/></g>
-          <path d="M77 32l4 9M214 35l-4 9" stroke="#b8c8a9" strokeWidth="4" strokeLinecap="round"/>
-          <Heart x={140} y={41} size={1.2}/><Heart x={67} y={79} size={.35} color="#e6bac1"/><Heart x={214} y={115} size={.4} color="#e6bac1"/>
-        </> : isMissedCatch ? <>
-          <FallenGirl/>
-        </> : <>
-          <g fill="#b6c3cf"><rect x="83" y="65" width="114" height="45" rx="23"/><circle cx="111" cy="65" r="24"/><circle cx="151" cy="56" r="31"/></g>
-          <path d="M113 88q5-6 10 0M154 88q5-6 10 0" stroke="#8393a4" fill="none" strokeWidth="3" strokeLinecap="round"/>
-          <path d="M108 120l-4 10M140 119l-4 10M173 120l-4 10" stroke="#a8bfd0" strokeWidth="5" strokeLinecap="round"/>
-          <path d="M140 184Q148 155 127 151" fill="none" stroke="#9fb293" strokeWidth="6" strokeLinecap="round"/><g transform="translate(124 157) rotate(145)"><Flower size={.45} rose/></g>
-        </>}
-      </svg>
-      <h1 id="result-title" role="status">{isWin ? text.winTitle : isMissedCatch ? text.missedTitle : text.loseTitle}</h1>
-      <p className="result-copy">{isWin ? text.winCopy : isMissedCatch ? text.missedCopy : text.loseCopy}</p>
-      {isNewBest && <span className="best-badge">{text.best}</span>}
-      <div className="result-score"><small>{text.total}</small><strong>{finalScore}</strong><small>{formatText(text.streak, { level, combo: maxCombo })}</small></div>
-      <div className="result-stats"><span>{formatText(text.flowers, { count: stats.sunflowers || 0 })}</span><span>{formatText(text.stars, { count: stats.stars || 0 })}</span><span>{formatText(text.hearts, { count: stats.hearts || 0 })}</span><span>{formatText(text.sparkles, { count: stats.sparkles || 0 })}</span></div>
-      <button className="primary-button" onClick={onPlayAgain}>{formatText(text.playAgain, { level: level + 1 })} <span aria-hidden="true">{TEXT_CONTENT.symbols.arrow}</span></button>
-      <button className="secondary-button" onClick={onBackToIntro}>{text.back}</button>
-    </section>
-  </main>, document.body);
-}
 
-
-
-function App() {
-  // App owns the session across canvas remounts. Only the round's temporary
-  // state (lives, timer, items, streak) belongs inside CatchingGame.
-  // Store the view and its result payload together, so an end screen can
-  // never render with a missing or stale result.
-  const [screen, setScreen] = useState({ view: 'intro', result: null });
-  const [soundMuted, setSoundMuted] = useState(false);
-  const [session, setSession] = useState({ score: 0, level: 0 });
-  const [gameKey, setGameKey] = useState(0);
-
-  React.useEffect(() => { document.title = TEXT_CONTENT.appTitle; }, []);
-
-  const handleToggleSound = () => {
-    setSoundMuted(sound.toggleMute());
-  };
-
-  // Every new round advances the level, including a round started from the
-  // letter after returning to the intro. Level 1 can therefore happen only once
-  // in this session; refreshing the page begins a new session.
-  const startRound = () => {
-    sound.init();
-    setSession(previous => ({ ...previous, level: previous.level + 1 }));
-    setGameKey(key => key + 1);
-    setScreen({ view: 'game', result: null });
-  };
-
-  const handleGameEnd = data => {
-    // Preserve accumulated points on BOTH victory and defeat. The next round
-    // earns another 500 points toward its own climax, rather than reusing the
-    // accumulated total as an immediately satisfied win condition.
-    setSession(previous => ({ ...previous, score: data.finalScore }));
-    setScreen({ view: 'end', result: data });
-  };
-
-  const handleBackToIntro = snapshot => {
-    // Leaving an unfinished round carries its earned points too. Result-screen
-    // buttons supply no snapshot because handleGameEnd already saved the total.
-    if (typeof snapshot?.score === 'number') {
-      setSession(previous => ({ ...previous, score: snapshot.score }));
+    function drawItem(ctx, item) {
+      ctx.save(); ctx.translate(item.x, item.y); ctx.rotate(item.angle || 0);
+      const id = item.id;
+      if (id === 'girl') { ctx.scale(item.scale ?? 1, item.scale ?? 1); drawCharacter(ctx, true); }
+      else if (id === 'heart') drawHeart(ctx, 0, 3, .9, item.color);
+      else if (id === 'sunflower') {
+        for (let i = 0; i < 10; i++) {
+          ctx.save(); ctx.rotate(i * Math.PI / 5); ctx.fillStyle = '#f5cb79';
+          ctx.beginPath(); ctx.ellipse(0, -16, 6, 12, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+        }
+        circle(ctx, 0, 0, 13, '#b88761');
+        circle(ctx, -4, -1, 1.5, '#745b50'); circle(ctx, 4, -1, 1.5, '#745b50');
+        ctx.strokeStyle = '#745b50'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(0, 2, 3, 0, Math.PI); ctx.stroke();
+      } else if (id === 'star' || id === 'sparkle') {
+        const count = id === 'star' ? 5 : 4;
+        ctx.fillStyle = item.color; ctx.beginPath();
+        for (let i = 0; i < count * 2; i++) {
+          const a = i * Math.PI / count - Math.PI / 2, r = i % 2 ? 10 : 24;
+          const x = Math.cos(a) * r, y = Math.sin(a) * r;
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.closePath(); ctx.fill();
+      } else if (id === 'cloud') {
+        fillRound(ctx, -25, -4, 50, 23, 12, item.color);
+        circle(ctx, -11, -6, 12, item.color); circle(ctx, 6, -11, 16, item.color);
+        circle(ctx, -7, 4, 1.8, '#788898'); circle(ctx, 8, 4, 1.8, '#788898');
+        ctx.strokeStyle = '#91a9bf'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+        for (const x of [-12, 1, 14]) { ctx.beginPath(); ctx.moveTo(x, 24); ctx.lineTo(x - 3, 30); ctx.stroke(); }
+      } else if (id === 'sickness') {
+        ctx.strokeStyle = item.color; ctx.lineWidth = 4; ctx.lineCap = 'round';
+        for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; ctx.beginPath(); ctx.moveTo(Math.cos(a) * 12, Math.sin(a) * 12); ctx.lineTo(Math.cos(a) * 24, Math.sin(a) * 24); ctx.stroke(); }
+        circle(ctx, 0, 0, 17, item.color); circle(ctx, -5, -3, 3, '#cfdbb9'); circle(ctx, 6, 6, 4, '#cfdbb9');
+      } else {
+        ctx.strokeStyle = '#a1b29a'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(0, 23); ctx.quadraticCurveTo(15, 0, 0, -8); ctx.stroke();
+        circle(ctx, -4, -10, 15, item.color); circle(ctx, 4, -8, 12, '#d3b3bd');
+      }
+      ctx.restore();
     }
-    setScreen({ view: 'intro', result: null });
-  };
 
-  return <div className="app-shell">
-    <style>{introStyles}</style>
-    {screen.view === 'intro' && <IntroScreen onStartGame={startRound} soundMuted={soundMuted} onToggleSound={handleToggleSound}/>}
-    {screen.view !== 'intro' && <div inert={screen.view === 'end' ? '' : undefined} aria-hidden={screen.view === 'end' ? true : undefined}><CatchingGame key={gameKey} level={session.level} initialScore={session.score} onGameEnd={handleGameEnd} onBackToIntro={handleBackToIntro} soundMuted={soundMuted} onToggleSound={handleToggleSound}/></div>}
-    {screen.view === 'end' && <GameOverModal {...screen.result} level={session.level} onPlayAgain={startRound} onBackToIntro={() => handleBackToIntro()}/>}
-  </div>;
-}
+    function drawMeadow(ctx, width, height) {
+      ctx.fillStyle = '#fbf3e7'; ctx.fillRect(0, 0, width, height);
+      circle(ctx, width * .82, height * .21, 48, '#f5dfaa');
+      circle(ctx, width * .82 - 10, height * .21 - 2, 2.5, '#bc9c74');
+      circle(ctx, width * .82 + 10, height * .21 - 2, 2.5, '#bc9c74');
+      ctx.strokeStyle = '#bc9c74'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(width * .82, height * .21 + 6, 6, 0, Math.PI); ctx.stroke();
+      ctx.fillStyle = '#e5ead4'; ctx.beginPath(); ctx.moveTo(0, height);
+      ctx.lineTo(0, height - 140); ctx.quadraticCurveTo(width * .3, height - 260, width, height - 110); ctx.lineTo(width, height); ctx.fill();
+      ctx.fillStyle = '#d5e2c8'; ctx.beginPath(); ctx.moveTo(0, height);
+      ctx.lineTo(0, height - 90); ctx.quadraticCurveTo(width * .7, height - 200, width, height - 105); ctx.lineTo(width, height); ctx.fill();
+      for (let i = 0; i < 14; i++) {
+        const x = ((i * 173 + 45) % width), y = height - 18 - (i % 4) * 21;
+        for (let j = 0; j < 5; j++) circle(ctx, x + Math.cos(j * Math.PI * .4) * 4, y + Math.sin(j * Math.PI * .4) * 4, 3.3, '#fff9e9');
+        circle(ctx, x, y, 2.5, '#dec283');
+      }
+    }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-</script>
+    // Screen-level narrator UI: no player coordinates, canvas text metrics, or
+    // collision geometry are involved. One keyed card replaces the previous note.
+    function NarratorMessage({ message, paused = false }) {
+      if (!message) return null;
+      return <aside className="narrator-anchor" aria-live="polite" aria-atomic="true" style={{ visibility: paused ? 'hidden' : undefined }}>
+        <div key={message.id} className="narrator-card" style={{ animationDuration: `${RULES.narratorSeconds}s`, animationPlayState: paused ? 'paused' : 'running', '--narrator-rise': `${RULES.narratorRise}px` }}>
+          <span className="narrator-speaker"><Icon name="heart" size={14} />{TEXT_CONTENT.game.narratorLabel}</span>
+          <p>{message.text}</p>
+        </div>
+      </aside>;
+    }
+
+    function CatchingGame({ level = 1, initialScore = 0, onGameEnd, onBackToIntro, soundMuted, onToggleSound }) {
+      const canvasRef = useRef(null);
+      const stateRef = useRef(null);
+      const endRef = useRef(onGameEnd);
+      endRef.current = onGameEnd;
+      const [hud, setHud] = useState({ score: initialScore, roundScore: 0, lives: RULES.lives, combo: 1, remaining: FINALE_SECONDS, finale: null, countdown: RULES.countdown });
+      const [narrator, setNarrator] = useState(null);
+      const [isPaused, setIsPaused] = useState(false);
+      const pausedRef = useRef(false);
+      const togglePause = () => { pausedRef.current = !pausedRef.current; setIsPaused(pausedRef.current); };
+
+      useEffect(() => {
+        const canvas = canvasRef.current, ctx = canvas.getContext('2d');
+        // Each remount starts a round, preserving only the parent's total and level.
+        // Replay speed and spawn frequency compound independently: level 2 is
+        // 1.6x as fast and spawns 1.55x as often; level 3 is 2.56x / 2.40x.
+        // Hazard weights also rise, while the total score stays in the parent.
+        const difficultyMultiplier = RULES.speedMultiplierPerLevel ** (level - 1);
+        const spawnMultiplier = RULES.spawnMultiplierPerLevel ** (level - 1);
+        const hazardMultiplier = 1 + (level - 1) * RULES.hazardStepPerLevel;
+        const state = {
+          width: 0, height: 0, elapsed: 0, countdown: RULES.countdown, spawnTimer: .3 / spawnMultiplier,
+          score: initialScore, startingScore: initialScore, level, difficultyMultiplier, spawnMultiplier, hazardMultiplier, lives: RULES.lives, combo: 1, active: true, finale: null, finaleTimer: 0,
+          items: [], particles: [], narrator: null, narratorId: 0, lastNarratorText: null, damage: 0, keys: { left: false, right: false },
+          player: { x: 0, targetX: 0, y: 0 },
+          stats: { sunflowers: 0, stars: 0, hearts: 0, sparkles: 0, maxCombo: 1 },
+        };
+        stateRef.current = state;
+        const publish = () => setHud({ score: state.score, roundScore: state.score - state.startingScore, lives: state.lives, combo: state.combo, remaining: Math.max(0, Math.ceil(FINALE_SECONDS - state.elapsed)), finale: state.finale, countdown: Math.max(0, Math.ceil(state.countdown)) });
+        const resize = () => {
+          // Physics stays in CSS pixels; only the backing buffer scales for Retina.
+          const { width, height } = canvas.getBoundingClientRect();
+          const previousWidth = state.width || width;
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          state.player.x = state.width ? state.player.x / previousWidth * width : width / 2;
+          state.player.targetX = state.player.x;
+          state.width = width; state.height = height; state.player.y = height - 110;
+          state.items.forEach(item => {
+            if (item.id === 'girl') {
+              item.x = finalDropX(width, item.dropFraction ?? item.x / previousWidth);
+              item.scale = Math.min(1, width / (RULES.finalCharacterHalfWidth * 2));
+            } else item.x = item.x / previousWidth * width;
+          });
+        };
+        resize();
+        const setKey = (e, pressed) => {
+          if (!state.active) return;
+          if (['ArrowLeft', 'ArrowRight', 'a', 'A', 'd', 'D'].includes(e.key)) {
+            e.preventDefault(); state.keys[['ArrowLeft', 'a', 'A'].includes(e.key) ? 'left' : 'right'] = pressed;
+          }
+          if (pressed && !e.repeat && ['Escape', 'p', 'P'].includes(e.key)) togglePause();
+        };
+        const keyDown = e => setKey(e, true), keyUp = e => setKey(e, false);
+        const blur = () => { state.keys.left = false; state.keys.right = false; if (state.active) { pausedRef.current = true; setIsPaused(true); } };
+        const visibility = () => { if (document.hidden) blur(); };
+        window.addEventListener('resize', resize); window.addEventListener('keydown', keyDown); window.addEventListener('keyup', keyUp);
+        window.addEventListener('blur', blur); document.addEventListener('visibilitychange', visibility);
+        // Terminal transition: active -> win/lose/missed-catch. Mark inactive BEFORE notifying
+        // React so no later frame can score, finish twice, or emit another bubble.
+        let animationId = null;
+        const finish = status => {
+          if (!state.active) return;
+          state.active = false;
+          state.narrator = null; setNarrator(null);
+          cancelAnimationFrame(animationId);
+          animationId = null;
+          state.keys.left = false; state.keys.right = false;
+          const isNewBest = state.score > readBestScore();
+          if (isNewBest) { try { localStorage.setItem('smiley_highscore', String(state.score)); } catch { /* Private browsing may disable storage. */ } }
+          // Commit the result first; a failed sound must never leave a frozen canvas.
+          endRef.current({ status, level, finalScore: state.score, roundScore: state.score - state.startingScore, maxCombo: state.stats.maxCombo, stats: { ...state.stats }, isNewBest });
+          playGameSound('stopBgm');
+          playGameSound(status === 'win' ? 'playVictory' : 'playDefeat');
+        };
+        // Round state machine: normal (null) -> waiting -> falling -> win.
+        // Missing the girl ends the round as missed-catch; losing all lives in normal
+        // ends it as lose. These are separate terminal outcomes, with separate UI.
+        // Clear every normal item/effect atomically so hazards cannot hit in finale.
+        const beginFinale = () => {
+          if (state.finale) return;
+          state.finale = 'waiting'; state.finaleTimer = 0;
+          state.items = []; state.particles = []; state.narrator = null; setNarrator(null); state.damage = 0; publish();
+        };
+        const spawnGirl = () => {
+          state.finale = 'falling';
+          // Use the highest possible ordinary speed in this round, plus 18%. The
+          // final drop is always faster, even on tall screens or an early score win.
+          const dropFraction = Math.random();
+          state.items = [{ id: 'girl', dropFraction, x: finalDropX(state.width, dropFraction), scale: Math.min(1, state.width / (RULES.finalCharacterHalfWidth * 2)), y: -75, angle: 0, speed: (RULES.baseSpeed + RULES.speedVariation + FINALE_SECONDS * RULES.speedPerSecond) * difficultyMultiplier * RULES.girlSpeedBoost }];
+          publish();
+        };
+        const spawnItem = () => {
+          // Positive weights stay fixed while hazards gain weight on every level.
+          const itemWeight = item => item.weight * (item.points > 0 ? 1 : hazardMultiplier);
+          let weight = Math.random() * ITEM_TYPES.reduce((sum, item) => sum + itemWeight(item), 0);
+          const type = ITEM_TYPES.find(item => { weight -= itemWeight(item); return weight < 0; }) || ITEM_TYPES[0];
+          state.items.push({ ...type, x: 35 + Math.random() * Math.max(1, state.width - 70), y: -35, speed: (RULES.baseSpeed + Math.random() * RULES.speedVariation + state.elapsed * RULES.speedPerSecond) * difficultyMultiplier, angle: 0, phase: Math.random() * Math.PI * 2 });
+        };
+        let lastTime = null, lastSecond = FINALE_SECONDS;
+        const frame = now => {
+          if (!state.active) return;
+          // Seconds-based integration keeps spawn/narrator/fall timing consistent
+          // across refresh rates. Cap large gaps so background throttling cannot
+          // teleport items past the catcher on the next visible frame.
+          const dt = lastTime === null ? 0 : Math.min((now - lastTime) / 1000, .05);
+          lastTime = now;
+          // Guard zero/negative health independently of the collision branch.
+          if (state.lives <= 0) { finish('lose'); return; }
+          if (!pausedRef.current) {
+            if (state.countdown > 0) {
+              const previous = Math.ceil(state.countdown); state.countdown = Math.max(0, state.countdown - dt);
+              if (previous !== Math.ceil(state.countdown)) publish();
+            } else {
+              const player = state.player;
+              state.elapsed += dt; state.damage = Math.max(0, state.damage - dt);
+              if (!state.finale && state.elapsed >= FINALE_SECONDS) beginFinale();
+              if (state.finale === 'waiting') { state.finaleTimer += dt; if (state.finaleTimer >= FINALE_PAUSE) spawnGirl(); }
+              if (state.keys.left || state.keys.right) player.targetX += ((state.keys.right ? 1 : 0) - (state.keys.left ? 1 : 0)) * 460 * dt;
+              player.targetX = Math.max(38, Math.min(state.width - 38, player.targetX));
+              player.x += (player.targetX - player.x) * (1 - Math.exp(-16 * dt));
+              if (!state.finale) { state.spawnTimer -= dt; if (state.spawnTimer <= 0) { spawnItem(); state.spawnTimer = RULES.spawnInterval / spawnMultiplier; } }
+              for (let i = state.items.length - 1; i >= 0; i--) {
+                const item = state.items[i], previousY = item.y;
+                item.y += item.speed * dt;
+                if (item.id !== 'girl') { item.x += Math.sin(state.elapsed * 2 + item.phase) * 16 * dt; item.angle = Math.sin(state.elapsed + item.phase) * .15; }
+                // Swept vertical collision: test the segment from previousY to the
+                // new Y against the basket band, not just the current point. This
+                // catches fast items even if one frame crosses the entire band.
+                // Horizontal tolerance is wider for the girl's larger silhouette.
+                const catchY = player.y + 15;
+                const inReach = Math.abs(item.x - player.x) < (item.id === 'girl' ? 54 : 43);
+                if (inReach && item.y >= catchY - 25 && previousY <= catchY + 25) {
+                  if (item.id === 'girl') { state.items = []; finish('win'); return; }
+                  if (item.points > 0) {
+                    state.score += item.points * state.combo; state.combo = Math.min(8, state.combo + 1);
+                    state.stats.maxCombo = Math.max(state.stats.maxCombo, state.combo);
+                    state.stats[{ sunflower: 'sunflowers', star: 'stars', heart: 'hearts', sparkle: 'sparkles' }[item.id]]++;
+                    playGameSound('playCatch', state.combo);
+                    // Bea narrates only level 1. A new catch replaces the single
+                    // active card and restarts its pop/float/fade animation, so a
+                    // rapid streak never stacks competing text. Avoid repeating
+                    // the previous line when multiple configured choices exist.
+                    if (level === 1) {
+                      const messages = TEXT_CONTENT.game.narratorMessages;
+                      const alternatives = messages.filter(text => text !== state.lastNarratorText);
+                      const choices = alternatives.length ? alternatives : messages;
+                      if (choices.length) {
+                        const text = choices[Math.floor(Math.random() * choices.length)];
+                        state.lastNarratorText = text;
+                        state.narrator = { id: ++state.narratorId, text, age: 0 };
+                        setNarrator(state.narrator);
+                      }
+                    }
+
+                    for (let j = 0; j < 9; j++) state.particles.push({ x: item.x, y: item.y, vx: (Math.random() - .5) * 120, vy: -30 - Math.random() * 90, life: .7, color: item.color });
+                    if (state.score - state.startingScore >= WIN_SCORE_TARGET) { beginFinale(); break; }
+                  } else {
+                    state.lives--; state.combo = 1; state.damage = .3; playGameSound('playHurt');
+                    if (state.lives <= 0) { finish('lose'); return; }
+                  }
+                  state.items.splice(i, 1); publish();
+                } else if (item.id === 'girl' && item.y > state.height) {
+                  // A final miss is terminal the instant her origin crosses the
+                  // canvas bottom. Do not retry, deduct hearts, or reset the score.
+                  state.items = [];
+                  finish('missed-catch');
+                  return;
+                } else if (item.y > state.height + 80) {
+                  if (item.points > 0 && state.combo > 1) { state.combo = 1; publish(); }
+                  state.items.splice(i, 1);
+                }
+              }
+              // Expiry uses simulation seconds so pausing freezes the lifetime too.
+              // React only updates on catch or dismissal, never once per frame.
+              if (state.narrator) {
+                state.narrator.age += dt;
+                if (state.narrator.age >= RULES.narratorSeconds) {
+                  state.narrator = null;
+                  setNarrator(null);
+                }
+              }
+              state.particles = state.particles.filter(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt; return p.life > 0; });
+              const second = Math.max(0, Math.ceil(FINALE_SECONDS - state.elapsed));
+              if (second !== lastSecond) { lastSecond = second; publish(); }
+            }
+          }
+          drawMeadow(ctx, state.width, state.height);
+          state.items.forEach(item => drawItem(ctx, item));
+          state.particles.forEach(p => { ctx.globalAlpha = p.life / .7; circle(ctx, p.x, p.y, 4, p.color); }); ctx.globalAlpha = 1;
+          ctx.save(); ctx.translate(state.player.x, state.player.y);
+          ctx.fillStyle = '#a0b18d35'; ctx.beginPath(); ctx.ellipse(0, 66, 40, 8, 0, 0, Math.PI * 2); ctx.fill();
+          drawCharacter(ctx);
+          fillRound(ctx, -30, 27, 60, 24, 10, '#d2ae86');
+          ctx.strokeStyle = '#e9c9a2'; ctx.lineWidth = 2;
+          for (const y of [33, 41]) { ctx.beginPath(); ctx.moveTo(-25, y); ctx.lineTo(25, y); ctx.stroke(); }
+          for (const x of [-18, -6, 6, 18]) { ctx.beginPath(); ctx.moveTo(x, 30); ctx.lineTo(x, 47); ctx.stroke(); }
+          ctx.restore();
+          if (state.damage > 0) { ctx.fillStyle = `rgba(218,151,161,${state.damage * .6})`; ctx.fillRect(0, 0, state.width, state.height); }
+          if (state.active) animationId = requestAnimationFrame(frame);
+        };
+        animationId = requestAnimationFrame(frame);
+        return () => {
+          // One effect owns all animation/listeners. Remounting for a harder round
+          // disposes the previous loop before the new state starts.
+          state.active = false; cancelAnimationFrame(animationId);
+          window.removeEventListener('resize', resize); window.removeEventListener('keydown', keyDown); window.removeEventListener('keyup', keyUp);
+          window.removeEventListener('blur', blur); document.removeEventListener('visibilitychange', visibility);
+        };
+      }, []);
+
+      const move = e => {
+        if (!stateRef.current || pausedRef.current) return;
+        const rect = canvasRef.current.getBoundingClientRect();
+        stateRef.current.player.targetX = e.clientX - rect.left;
+      };
+      const backToIntro = () => onBackToIntro({ score: stateRef.current?.score ?? initialScore });
+      const text = TEXT_CONTENT.game;
+      const controls = TEXT_CONTENT.controls;
+      return <div className="game-screen" onPointerMove={move} onPointerDown={e => { if (e.target === canvasRef.current) { e.currentTarget.setPointerCapture(e.pointerId); move(e); } }}>
+        <canvas ref={canvasRef} style={{ width: '100%', height: '100%', display: 'block' }} aria-label={text.canvasLabel} />
+        <div className="game-hud">
+          <div className="hud-card"><div className="score-line" aria-label={formatText(text.totalScore, { score: hud.score })}><svg width="28" height="28" viewBox="-30 -30 60 60" aria-hidden="true"><circle r="26" fill="#f5cb79" /><circle r="16" fill="#b88761" /></svg>{hud.score}<small>{formatText(text.levelProgress, { level, points: hud.roundScore, target: WIN_SCORE_TARGET })}<br />{hud.finale ? text.lastCatch : formatText(text.remaining, { seconds: hud.remaining })}</small></div><div className="score-progress"><span style={{ width: `${Math.min(100, Math.max(hud.roundScore / WIN_SCORE_TARGET, (FINALE_SECONDS - hud.remaining) / FINALE_SECONDS) * 100)}%` }} /></div></div>
+          <div className="hud-card hud-lives" aria-label={formatText(text.lives, { count: hud.lives })}>{Array.from({ length: RULES.lives }, (_, i) => <span key={i} style={{ opacity: i < hud.lives ? 1 : .2 }}><Icon name="heart" /></span>)}</div>
+          <div className="game-actions"><button className="icon-button" onClick={togglePause} aria-label={isPaused ? controls.resume : controls.pause}><Icon name={isPaused ? 'play' : 'pause'} /></button><button className="icon-button" onClick={onToggleSound} aria-label={soundMuted ? controls.unmute : controls.mute}><Icon name={soundMuted ? 'muted' : 'sound'} /></button><button className="icon-button" onClick={backToIntro} aria-label={controls.returnToLetter}><Icon name="home" /></button></div>
+        </div>
+        <NarratorMessage message={narrator} paused={isPaused} />
+        {hud.finale && <div className="finale-message" role="status"><h2>{hud.finale === 'waiting' ? text.waitingTitle : text.fallingTitle}</h2><p>{hud.finale === 'waiting' ? text.waitingCopy : text.fallingCopy}</p></div>}
+        <div className="game-guidance">{hud.combo > 1 && !hud.finale ? formatText(text.streak, { combo: hud.combo }) : ''}{text.controls}</div>
+        {hud.countdown > 0 && !isPaused && <div className="game-overlay" role="status"><p className="eyebrow">{text.countdownTitle}</p><h2>{hud.countdown}</h2><p>{text.countdownCopy}</p></div>}
+        {isPaused && <div className="game-overlay"><h2>{text.pauseTitle}</h2><p>{text.pauseCopy}</p><button className="primary-button" onClick={togglePause}>{text.resume}<Icon name="play" size={16} /></button><button className="secondary-button" onClick={backToIntro}>{text.back}</button></div>}
+      </div>;
+    }
+
+
+
+    function GameOverModal({ status, level = 1, finalScore = 0, maxCombo = 1, stats = {}, isNewBest, onPlayAgain, onBackToIntro }) {
+      const isWin = status === 'win';
+      const isMissedCatch = status === 'missed-catch';
+      const text = TEXT_CONTENT.result;
+      const cardRef = useRef(null);
+      useEffect(() => {
+        const previousFocus = document.activeElement;
+        cardRef.current?.focus();
+        const keyDown = event => {
+          if (event.key !== 'Tab' || !cardRef.current) return;
+          const buttons = cardRef.current.querySelectorAll('button');
+          const first = buttons[0], last = buttons[buttons.length - 1];
+          if (event.shiftKey && (document.activeElement === first || document.activeElement === cardRef.current)) { event.preventDefault(); last.focus(); }
+          else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+        };
+        document.addEventListener('keydown', keyDown);
+        return () => { document.removeEventListener('keydown', keyDown); previousFocus?.focus(); };
+      }, []);
+      useEffect(() => {
+        if (isWin && window.confetti && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          window.confetti({ particleCount: 70, spread: 75, origin: { y: .6 }, colors: ['#e4acb3', '#f1d195', '#b7cdb1', '#c1b2d4'], disableForReducedMotion: true });
+        }
+      }, [isWin]);
+      // A body portal and fixed positioning put every result above the stopped
+      // canvas, regardless of parent overflow or stacking contexts.
+      return ReactDOM.createPortal(<main className="result-screen">
+        <section ref={cardRef} tabIndex={-1} role="dialog" aria-modal="true" className="result-card" data-status={status} aria-labelledby="result-title">
+          <p className="eyebrow">{isWin ? text.winEyebrow : isMissedCatch ? text.missedEyebrow : text.loseEyebrow}</p>
+          <svg className="result-art" viewBox="0 0 280 200" role="img" aria-label={isWin ? text.winArt : isMissedCatch ? text.missedArt : text.loseArt}>
+            <ellipse cx="140" cy="104" rx="91" ry="83" fill={isWin ? '#f6e4df' : '#e9e9e3'} />
+            {isWin ? <>
+              <ellipse cx="140" cy="183" rx="72" ry="8" fill="#dec9c330" />
+              {/* Separate, upright silhouettes: two happy people celebrating together. */}
+              <Character x={94} y={116} size={.95} /><Character girl x={186} y={116} size={.95} />
+              <g fill="#e2bd7c"><circle cx="56" cy="44" r="4" /><circle cx="226" cy="64" r="3" /></g>
+              <path d="M77 32l4 9M214 35l-4 9" stroke="#b8c8a9" strokeWidth="4" strokeLinecap="round" />
+              <Heart x={140} y={41} size={1.2} /><Heart x={67} y={79} size={.35} color="#e6bac1" /><Heart x={214} y={115} size={.4} color="#e6bac1" />
+            </> : isMissedCatch ? <>
+              <FallenGirl />
+            </> : <>
+              <g fill="#b6c3cf"><rect x="83" y="65" width="114" height="45" rx="23" /><circle cx="111" cy="65" r="24" /><circle cx="151" cy="56" r="31" /></g>
+              <path d="M113 88q5-6 10 0M154 88q5-6 10 0" stroke="#8393a4" fill="none" strokeWidth="3" strokeLinecap="round" />
+              <path d="M108 120l-4 10M140 119l-4 10M173 120l-4 10" stroke="#a8bfd0" strokeWidth="5" strokeLinecap="round" />
+              <path d="M140 184Q148 155 127 151" fill="none" stroke="#9fb293" strokeWidth="6" strokeLinecap="round" /><g transform="translate(124 157) rotate(145)"><Flower size={.45} rose /></g>
+            </>}
+          </svg>
+          <h1 id="result-title" role="status">{isWin ? text.winTitle : isMissedCatch ? text.missedTitle : text.loseTitle}</h1>
+          <p className="result-copy">{isWin ? text.winCopy : isMissedCatch ? text.missedCopy : text.loseCopy}</p>
+          {isNewBest && <span className="best-badge">{text.best}</span>}
+          <div className="result-score"><small>{text.total}</small><strong>{finalScore}</strong><small>{formatText(text.streak, { level, combo: maxCombo })}</small></div>
+          <div className="result-stats"><span>{formatText(text.flowers, { count: stats.sunflowers || 0 })}</span><span>{formatText(text.stars, { count: stats.stars || 0 })}</span><span>{formatText(text.hearts, { count: stats.hearts || 0 })}</span><span>{formatText(text.sparkles, { count: stats.sparkles || 0 })}</span></div>
+          <button className="primary-button" onClick={onPlayAgain}>{formatText(text.playAgain, { level: level + 1 })} <span aria-hidden="true">{TEXT_CONTENT.symbols.arrow}</span></button>
+          <button className="secondary-button" onClick={onBackToIntro}>{text.back}</button>
+        </section>
+      </main>, document.body);
+    }
+
+
+
+    function App() {
+      // App owns the session across canvas remounts. Only the round's temporary
+      // state (lives, timer, items, streak) belongs inside CatchingGame.
+      // Store the view and its result payload together, so an end screen can
+      // never render with a missing or stale result.
+      const [screen, setScreen] = useState({ view: 'intro', result: null });
+      const [soundMuted, setSoundMuted] = useState(false);
+      const [session, setSession] = useState({ score: 0, level: 0 });
+      const [gameKey, setGameKey] = useState(0);
+
+      React.useEffect(() => { document.title = TEXT_CONTENT.appTitle; }, []);
+
+      const handleToggleSound = () => {
+        setSoundMuted(sound.toggleMute());
+      };
+
+      // Every new round advances the level, including a round started from the
+      // letter after returning to the intro. Level 1 can therefore happen only once
+      // in this session; refreshing the page begins a new session.
+      const startRound = () => {
+        sound.init();
+        setSession(previous => ({ ...previous, level: previous.level + 1 }));
+        setGameKey(key => key + 1);
+        setScreen({ view: 'game', result: null });
+      };
+
+      const handleGameEnd = data => {
+        // Preserve accumulated points on BOTH victory and defeat. The next round
+        // earns another 500 points toward its own climax, rather than reusing the
+        // accumulated total as an immediately satisfied win condition.
+        setSession(previous => ({ ...previous, score: data.finalScore }));
+        setScreen({ view: 'end', result: data });
+      };
+
+      const handleBackToIntro = snapshot => {
+        // Leaving an unfinished round carries its earned points too. Result-screen
+        // buttons supply no snapshot because handleGameEnd already saved the total.
+        if (typeof snapshot?.score === 'number') {
+          setSession(previous => ({ ...previous, score: snapshot.score }));
+        }
+        setScreen({ view: 'intro', result: null });
+      };
+
+      return <div className="app-shell">
+        <style>{introStyles}</style>
+        {screen.view === 'intro' && <IntroScreen onStartGame={startRound} soundMuted={soundMuted} onToggleSound={handleToggleSound} />}
+        {screen.view !== 'intro' && <div inert={screen.view === 'end' ? '' : undefined} aria-hidden={screen.view === 'end' ? true : undefined}><CatchingGame key={gameKey} level={session.level} initialScore={session.score} onGameEnd={handleGameEnd} onBackToIntro={handleBackToIntro} soundMuted={soundMuted} onToggleSound={handleToggleSound} /></div>}
+        {screen.view === 'end' && <GameOverModal {...screen.result} level={session.level} onPlayAgain={startRound} onBackToIntro={() => handleBackToIntro()} />}
+      </div>;
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
 </body>
+
 </html>
