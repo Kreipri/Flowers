@@ -17,6 +17,20 @@ const ITEM_TYPES = [
   { id: 'thorn', points: 0, color: '#bc9ba8', weight: 8 },
 ];
 
+// Audio is decorative: unsupported/blocked Web Audio must never interrupt
+// collision handling or prevent a terminal state from reaching React.
+function playGameSound(method, ...args) {
+  try { sound[method](...args); }
+  catch { /* Continue rendering the game/result even when audio is unavailable. */ }
+}
+
+// The sprite is drawn around its center, so reserve its half-width at BOTH
+// edges. A stored uniform random fraction preserves the surprise on resize.
+function finalDropX(width, fraction) {
+  const padding = Math.min(width / 2, RULES.finalCharacterHalfWidth + RULES.finalDropEdgePadding);
+  return padding + fraction * Math.max(0, width - padding * 2);
+}
+
 function readBestScore() {
   try { return Number(localStorage.getItem('smiley_highscore')) || 0; }
   catch { return 0; }
@@ -70,7 +84,7 @@ function drawCharacter(ctx, girl = false) {
 function drawItem(ctx, item) {
   ctx.save(); ctx.translate(item.x, item.y); ctx.rotate(item.angle || 0);
   const id = item.id;
-  if (id === 'girl') drawCharacter(ctx, true);
+  if (id === 'girl') { ctx.scale(item.scale ?? 1, item.scale ?? 1); drawCharacter(ctx, true); }
   else if (id === 'heart') drawHeart(ctx, 0, 3, .9, item.color);
   else if (id === 'sunflower') {
     for (let i = 0; i < 10; i++) {
@@ -124,21 +138,16 @@ function drawMeadow(ctx, width, height) {
   }
 }
 
-function drawSpeechBubble(ctx, bubble, width) {
-  const progress = bubble.age / RULES.bubbleSeconds;
-  ctx.save();
-  // Fade in quickly, then drift upward and fade out over a 1.6-second lifetime.
-  ctx.globalAlpha = Math.min(1, bubble.age / .12) * Math.min(1, (1 - progress) / .35);
-  ctx.font = '600 12px Quicksand, sans-serif';
-  const bubbleWidth = Math.min(width - 24, ctx.measureText(bubble.text).width + 30);
-  const x = Math.max(12, Math.min(width - bubbleWidth - 12, bubble.x - bubbleWidth / 2));
-  const y = bubble.y - progress * RULES.bubbleRise;
-  fillRound(ctx, x, y, bubbleWidth, 36, 15, '#fffcf5');
-  ctx.fillStyle = '#fffcf5'; ctx.beginPath(); ctx.moveTo(x + bubbleWidth / 2 - 6, y + 34);
-  ctx.lineTo(x + bubbleWidth / 2, y + 43); ctx.lineTo(x + bubbleWidth / 2 + 6, y + 34); ctx.fill();
-  ctx.fillStyle = '#a3687c'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText(bubble.text, x + bubbleWidth / 2, y + 18, bubbleWidth - 20);
-  ctx.restore();
+// Screen-level narrator UI: no player coordinates, canvas text metrics, or
+// collision geometry are involved. One keyed card replaces the previous note.
+export function NarratorMessage({ message, paused = false }) {
+  if (!message) return null;
+  return <aside className="narrator-anchor" aria-live="polite" aria-atomic="true" style={{ visibility: paused ? 'hidden' : undefined }}>
+    <div key={message.id} className="narrator-card" style={{ animationDuration: `${RULES.narratorSeconds}s`, animationPlayState: paused ? 'paused' : 'running', '--narrator-rise': `${RULES.narratorRise}px` }}>
+      <span className="narrator-speaker"><Icon name="heart" size={14}/>{TEXT_CONTENT.game.narratorLabel}</span>
+      <p>{message.text}</p>
+    </div>
+  </aside>;
 }
 
 export default function CatchingGame({ level = 1, initialScore = 0, onGameEnd, onBackToIntro, soundMuted, onToggleSound }) {
@@ -147,6 +156,7 @@ export default function CatchingGame({ level = 1, initialScore = 0, onGameEnd, o
   const endRef = useRef(onGameEnd);
   endRef.current = onGameEnd;
   const [hud, setHud] = useState({ score: initialScore, roundScore: 0, lives: RULES.lives, combo: 1, remaining: FINALE_SECONDS, finale: null, countdown: RULES.countdown });
+  const [narrator, setNarrator] = useState(null);
   const [isPaused, setIsPaused] = useState(false);
   const pausedRef = useRef(false);
   const togglePause = () => { pausedRef.current = !pausedRef.current; setIsPaused(pausedRef.current); };
@@ -163,7 +173,7 @@ export default function CatchingGame({ level = 1, initialScore = 0, onGameEnd, o
     const state = {
       width: 0, height: 0, elapsed: 0, countdown: RULES.countdown, spawnTimer: .3 / spawnMultiplier,
       score: initialScore, startingScore: initialScore, level, difficultyMultiplier, spawnMultiplier, hazardMultiplier, lives: RULES.lives, combo: 1, active: true, finale: null, finaleTimer: 0,
-      items: [], particles: [], bubbles: [], damage: 0, keys: { left: false, right: false },
+      items: [], particles: [], narrator: null, narratorId: 0, lastNarratorText: null, damage: 0, keys: { left: false, right: false },
       player: { x: 0, targetX: 0, y: 0 },
       stats: { sunflowers: 0, stars: 0, hearts: 0, sparkles: 0, maxCombo: 1 },
     };
@@ -179,10 +189,16 @@ export default function CatchingGame({ level = 1, initialScore = 0, onGameEnd, o
       state.player.x = state.width ? state.player.x / previousWidth * width : width / 2;
       state.player.targetX = state.player.x;
       state.width = width; state.height = height; state.player.y = height - 110;
-      state.items.forEach(item => { item.x = item.id === 'girl' ? width / 2 : item.x / previousWidth * width; });
+      state.items.forEach(item => {
+        if (item.id === 'girl') {
+          item.x = finalDropX(width, item.dropFraction ?? item.x / previousWidth);
+          item.scale = Math.min(1, width / (RULES.finalCharacterHalfWidth * 2));
+        } else item.x = item.x / previousWidth * width;
+      });
     };
     resize();
     const setKey = (e, pressed) => {
+      if (!state.active) return;
       if (['ArrowLeft', 'ArrowRight', 'a', 'A', 'd', 'D'].includes(e.key)) {
         e.preventDefault(); state.keys[['ArrowLeft', 'a', 'A'].includes(e.key) ? 'left' : 'right'] = pressed;
       }
@@ -193,29 +209,38 @@ export default function CatchingGame({ level = 1, initialScore = 0, onGameEnd, o
     const visibility = () => { if (document.hidden) blur(); };
     window.addEventListener('resize', resize); window.addEventListener('keydown', keyDown); window.addEventListener('keyup', keyUp);
     window.addEventListener('blur', blur); document.addEventListener('visibilitychange', visibility);
-    // Terminal transition: active -> win/lose. Mark inactive BEFORE notifying
+    // Terminal transition: active -> win/lose/missed-catch. Mark inactive BEFORE notifying
     // React so no later frame can score, finish twice, or emit another bubble.
+    let animationId = null;
     const finish = status => {
       if (!state.active) return;
       state.active = false;
+      state.narrator = null; setNarrator(null);
+      cancelAnimationFrame(animationId);
+      animationId = null;
+      state.keys.left = false; state.keys.right = false;
       const isNewBest = state.score > readBestScore();
       if (isNewBest) { try { localStorage.setItem('smiley_highscore', String(state.score)); } catch { /* Private browsing may disable storage. */ } }
-      if (status === 'win') sound.playVictory(); else sound.playDefeat();
+      // Commit the result first; a failed sound must never leave a frozen canvas.
       endRef.current({ status, level, finalScore: state.score, roundScore: state.score - state.startingScore, maxCombo: state.stats.maxCombo, stats: { ...state.stats }, isNewBest });
+      playGameSound('stopBgm');
+      playGameSound(status === 'win' ? 'playVictory' : 'playDefeat');
     };
     // Round state machine: normal (null) -> waiting -> falling -> win.
-    // A missed girl loops falling -> waiting; losing all lives in normal -> lose.
+    // Missing the girl ends the round as missed-catch; losing all lives in normal
+    // ends it as lose. These are separate terminal outcomes, with separate UI.
     // Clear every normal item/effect atomically so hazards cannot hit in finale.
     const beginFinale = () => {
       if (state.finale) return;
       state.finale = 'waiting'; state.finaleTimer = 0;
-      state.items = []; state.particles = []; state.bubbles = []; state.damage = 0; publish();
+      state.items = []; state.particles = []; state.narrator = null; setNarrator(null); state.damage = 0; publish();
     };
     const spawnGirl = () => {
       state.finale = 'falling';
       // Use the highest possible ordinary speed in this round, plus 18%. The
       // final drop is always faster, even on tall screens or an early score win.
-      state.items = [{ id: 'girl', x: state.width / 2, y: -75, angle: 0, speed: (RULES.baseSpeed + RULES.speedVariation + FINALE_SECONDS * RULES.speedPerSecond) * difficultyMultiplier * RULES.girlSpeedBoost }];
+      const dropFraction = Math.random();
+      state.items = [{ id: 'girl', dropFraction, x: finalDropX(state.width, dropFraction), scale: Math.min(1, state.width / (RULES.finalCharacterHalfWidth * 2)), y: -75, angle: 0, speed: (RULES.baseSpeed + RULES.speedVariation + FINALE_SECONDS * RULES.speedPerSecond) * difficultyMultiplier * RULES.girlSpeedBoost }];
       publish();
     };
     const spawnItem = () => {
@@ -225,14 +250,16 @@ export default function CatchingGame({ level = 1, initialScore = 0, onGameEnd, o
       const type = ITEM_TYPES.find(item => { weight -= itemWeight(item); return weight < 0; }) || ITEM_TYPES[0];
       state.items.push({ ...type, x: 35 + Math.random() * Math.max(1, state.width - 70), y: -35, speed: (RULES.baseSpeed + Math.random() * RULES.speedVariation + state.elapsed * RULES.speedPerSecond) * difficultyMultiplier, angle: 0, phase: Math.random() * Math.PI * 2 });
     };
-    let animationId, lastTime = null, lastSecond = FINALE_SECONDS;
+    let lastTime = null, lastSecond = FINALE_SECONDS;
     const frame = now => {
       if (!state.active) return;
-      // Seconds-based integration keeps spawn/bubble/fall timing consistent
+      // Seconds-based integration keeps spawn/narrator/fall timing consistent
       // across refresh rates. Cap large gaps so background throttling cannot
       // teleport items past the catcher on the next visible frame.
       const dt = lastTime === null ? 0 : Math.min((now - lastTime) / 1000, .05);
       lastTime = now;
+      // Guard zero/negative health independently of the collision branch.
+      if (state.lives <= 0) { finish('lose'); return; }
       if (!pausedRef.current) {
         if (state.countdown > 0) {
           const previous = Math.ceil(state.countdown); state.countdown = Math.max(0, state.countdown - dt);
@@ -262,34 +289,50 @@ export default function CatchingGame({ level = 1, initialScore = 0, onGameEnd, o
                 state.score += item.points * state.combo; state.combo = Math.min(8, state.combo + 1);
                 state.stats.maxCombo = Math.max(state.stats.maxCombo, state.combo);
                 state.stats[{ sunflower: 'sunflowers', star: 'stars', heart: 'hearts', sparkle: 'sparkles' }[item.id]]++;
-                sound.playCatch(state.combo);
-                // Only the first playthrough gets sweet messages. New bubbles
-                // replace the oldest at the cap; simulation time handles their
-                // fade, rise, pause, and removal without orphaned timeout calls.
+                playGameSound('playCatch', state.combo);
+                // Bea narrates only level 1. A new catch replaces the single
+                // active card and restarts its pop/float/fade animation, so a
+                // rapid streak never stacks competing text. Avoid repeating
+                // the previous line when multiple configured choices exist.
                 if (level === 1) {
-                  const messages = TEXT_CONTENT.game.sweetMessages;
-                  if (messages.length) {
-                    state.bubbles.push({ text: messages[Math.floor(Math.random() * messages.length)], x: player.x, y: player.y - 100, age: 0 });
-                    state.bubbles = state.bubbles.slice(-RULES.maxBubbles);
+                  const messages = TEXT_CONTENT.game.narratorMessages;
+                  const alternatives = messages.filter(text => text !== state.lastNarratorText);
+                  const choices = alternatives.length ? alternatives : messages;
+                  if (choices.length) {
+                    const text = choices[Math.floor(Math.random() * choices.length)];
+                    state.lastNarratorText = text;
+                    state.narrator = { id: ++state.narratorId, text, age: 0 };
+                    setNarrator(state.narrator);
                   }
                 }
 
                 for (let j = 0; j < 9; j++) state.particles.push({ x: item.x, y: item.y, vx: (Math.random() - .5) * 120, vy: -30 - Math.random() * 90, life: .7, color: item.color });
                 if (state.score - state.startingScore >= WIN_SCORE_TARGET) { beginFinale(); break; }
               } else {
-                state.lives--; state.combo = 1; state.damage = .3; sound.playHurt();
+                state.lives--; state.combo = 1; state.damage = .3; playGameSound('playHurt');
                 if (state.lives <= 0) { finish('lose'); return; }
               }
               state.items.splice(i, 1); publish();
+            } else if (item.id === 'girl' && item.y > state.height) {
+              // A final miss is terminal the instant her origin crosses the
+              // canvas bottom. Do not retry, deduct hearts, or reset the score.
+              state.items = [];
+              finish('missed-catch');
+              return;
             } else if (item.y > state.height + 80) {
-              // Missing the finale retries the same drop, without adding
-              // hazards or deducting lives/points.
-              if (item.id === 'girl') { state.finale = 'waiting'; state.finaleTimer = 0; state.items = []; publish(); break; }
               if (item.points > 0 && state.combo > 1) { state.combo = 1; publish(); }
               state.items.splice(i, 1);
             }
           }
-          state.bubbles = state.bubbles.filter(bubble => { bubble.age += dt; return bubble.age < RULES.bubbleSeconds; });
+          // Expiry uses simulation seconds so pausing freezes the lifetime too.
+          // React only updates on catch or dismissal, never once per frame.
+          if (state.narrator) {
+            state.narrator.age += dt;
+            if (state.narrator.age >= RULES.narratorSeconds) {
+              state.narrator = null;
+              setNarrator(null);
+            }
+          }
           state.particles = state.particles.filter(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt; return p.life > 0; });
           const second = Math.max(0, Math.ceil(FINALE_SECONDS - state.elapsed));
           if (second !== lastSecond) { lastSecond = second; publish(); }
@@ -306,9 +349,8 @@ export default function CatchingGame({ level = 1, initialScore = 0, onGameEnd, o
       for (const y of [33, 41]) { ctx.beginPath(); ctx.moveTo(-25, y); ctx.lineTo(25, y); ctx.stroke(); }
       for (const x of [-18, -6, 6, 18]) { ctx.beginPath(); ctx.moveTo(x, 30); ctx.lineTo(x, 47); ctx.stroke(); }
       ctx.restore();
-      state.bubbles.forEach(bubble => drawSpeechBubble(ctx, bubble, state.width));
       if (state.damage > 0) { ctx.fillStyle = `rgba(218,151,161,${state.damage * .6})`; ctx.fillRect(0, 0, state.width, state.height); }
-      animationId = requestAnimationFrame(frame);
+      if (state.active) animationId = requestAnimationFrame(frame);
     };
     animationId = requestAnimationFrame(frame);
     return () => {
@@ -335,6 +377,7 @@ export default function CatchingGame({ level = 1, initialScore = 0, onGameEnd, o
       <div className="hud-card hud-lives" aria-label={formatText(text.lives, { count: hud.lives })}>{Array.from({ length: RULES.lives }, (_, i) => <span key={i} style={{ opacity: i < hud.lives ? 1 : .2 }}><Icon name="heart"/></span>)}</div>
       <div className="game-actions"><button className="icon-button" onClick={togglePause} aria-label={isPaused ? controls.resume : controls.pause}><Icon name={isPaused ? 'play' : 'pause'}/></button><button className="icon-button" onClick={onToggleSound} aria-label={soundMuted ? controls.unmute : controls.mute}><Icon name={soundMuted ? 'muted' : 'sound'}/></button><button className="icon-button" onClick={backToIntro} aria-label={controls.returnToLetter}><Icon name="home"/></button></div>
     </div>
+    <NarratorMessage message={narrator} paused={isPaused}/>
     {hud.finale && <div className="finale-message" role="status"><h2>{hud.finale === 'waiting' ? text.waitingTitle : text.fallingTitle}</h2><p>{hud.finale === 'waiting' ? text.waitingCopy : text.fallingCopy}</p></div>}
     <div className="game-guidance">{hud.combo > 1 && !hud.finale ? formatText(text.streak, { combo: hud.combo }) : ''}{text.controls}</div>
     {hud.countdown > 0 && !isPaused && <div className="game-overlay" role="status"><p className="eyebrow">{text.countdownTitle}</p><h2>{hud.countdown}</h2><p>{text.countdownCopy}</p></div>}

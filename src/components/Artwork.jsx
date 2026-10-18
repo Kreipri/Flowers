@@ -2,9 +2,10 @@ import React from 'react';
 
 // SVG menus and Canvas sprites share the same hair silhouettes.
 // Uneven side-swept bangs for the boy; side-parted, medium waves for the girl.
-// Both are filled solid black, without highlights.
+// A single semicircular arc keeps the boy’s crown perfectly round; only his
+// bangs are textured. Both hairstyles are solid black, without highlights.
 export const CHARACTER_HAIR = {
-  boy: 'M-30-9L-32-23L-28-26L-30-34L-22-34L-19-42L-13-40Q-2-52 7-45L15-48L17-43Q31-42 32-25L30-7L24-16L20-27Q12-18 2-14L5-23Q-6-11-18-9L-14-19L-25-11L-26-3Z',
+  boy: 'M-30-19A30 30 0 0 1 30-19L30-7L24-16L20-27Q12-18 2-14L5-23Q-6-11-18-9L-14-19L-25-11L-26-3Z',
   girlBack: 'M-29-22Q-40 0-32 14Q-41 31-25 43Q-19 48-13 40L19 43Q38 39 32 22Q43 6 31-9Q33-43 4-47Q-23-50-29-22Z',
   girlFront: 'M-29-11Q-37-47-2-49Q31-51 30-10L24-16Q13-22 7-37Q-2-18-29-11Z',
 };
@@ -61,7 +62,7 @@ export function Bouquet({ front = false }) {
   </svg>;
 }
 
-export function Character({ girl = false, x = 0, y = 0, size = 1 }) {
+export function Character({ girl = false, fallen = false, x = 0, y = 0, size = 1 }) {
   const top = girl ? CHARACTER_STYLE.girlTop : CHARACTER_STYLE.guyTop;
   return <g transform={`translate(${x} ${y}) scale(${size})`}>
     {girl && <path d={CHARACTER_HAIR.girlBack} fill={CHARACTER_STYLE.hair}/>}
@@ -72,8 +73,17 @@ export function Character({ girl = false, x = 0, y = 0, size = 1 }) {
     <circle cy="-14" r="29" fill="#f2cfb8"/>
     <path d={girl ? CHARACTER_HAIR.girlFront : CHARACTER_HAIR.boy} fill={CHARACTER_STYLE.hair}/>
     <ellipse cx="-17" cy="-5" rx="6" ry="3.5" fill={CHARACTER_STYLE.blush}/><ellipse cx="17" cy="-5" rx="6" ry="3.5" fill={CHARACTER_STYLE.blush}/>
-    <path d="M-12-9q4-6 8 0M5-9q4-6 8 0M-4 0q4 5 8 0" fill="none" stroke="#745c59" strokeWidth="2.5" strokeLinecap="round"/>
+    <path d={fallen ? 'M-12-9h8M5-9h8M-3 2h6' : 'M-12-9q4-6 8 0M5-9q4-6 8 0M-4 0q4 5 8 0'} fill="none" stroke="#745c59" strokeWidth="2.5" strokeLinecap="round"/>
     {girl && <path d={GIRL_COLLAR} fill={CHARACTER_STYLE.collar}/>}
+  </g>;
+}
+
+// Stylized flat-vector failed-catch scene; no anatomical injury details.
+export function FallenGirl() {
+  return <g>
+    <path d="M58 135C41 120 73 112 96 115C121 101 147 112 168 116C199 111 224 123 218 136C241 145 216 163 188 158C163 170 141 159 120 163C91 173 64 156 58 150C39 151 37 140 58 135Z" fill="#8b243b"/>
+    <ellipse cx="49" cy="161" rx="9" ry="4" fill="#8b243b"/><ellipse cx="231" cy="146" rx="6" ry="3" fill="#8b243b"/>
+    <g transform="translate(141 118) rotate(-90)"><Character girl fallen size={.95}/></g>
   </g>;
 }
 

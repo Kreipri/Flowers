@@ -7,7 +7,7 @@ const assert = require('node:assert/strict');
 const compiler = {};
 vm.runInNewContext(fs.readFileSync(process.argv[2], 'utf8'), compiler);
 const root = path.resolve(__dirname, '..');
-const files = ['src/gameConfig.js', 'src/components/Artwork.jsx', 'src/components/IntroScreen.jsx', 'src/components/GameOverModal.jsx', 'src/App.jsx'];
+const files = ['src/gameConfig.js', 'src/components/Artwork.jsx', 'src/components/IntroScreen.jsx', 'src/components/CatchingGame.jsx', 'src/components/GameOverModal.jsx', 'src/App.jsx'];
 const source = files.map(file => fs.readFileSync(path.join(root, file), 'utf8').replace(/^import .*\n/gm, '').replace(/^export default /gm, '').replace(/^export /gm, '')).join('\n');
 const compiled = compiler.Babel.transform(source, { presets: [['react', { runtime: 'classic' }]], ast: true });
 
@@ -33,7 +33,9 @@ function mount(name, props = {}, reducedMotion = false) {
   const sandbox = {
     React: react, ...react, CatchingGame: function CatchingGame() {},
     sound: new Proxy({}, { get: () => () => {} }),
-    window: { matchMedia: () => ({ matches: reducedMotion }) }, document: { title: '' },
+    window: { matchMedia: () => ({ matches: reducedMotion }) },
+    document: { title: '', body: {}, addEventListener() {}, removeEventListener() {} },
+    ReactDOM: { createPortal: (child, container) => ({ type: 'portal', props: { container }, children: [child] }) },
     setTimeout: (fn, ms) => { timers.set(++timerId, { fn, ms }); return timerId; },
     clearTimeout: id => timers.delete(id),
   };
@@ -155,6 +157,94 @@ test('both sprites have solid black hair, dark trousers/shoes, and distinct tops
     assert.ok(rectangles.some(node => node.props.fill === (girl ? '#555661' : '#a6a9b1')));
     app.cleanup();
   }
+});
+
+test('health defeat and missed-catch defeat have separate headings and graphics', () => {
+  const normal = mount('GameOverModal', { status: 'lose', level: 1, finalScore: 25, maxCombo: 1, stats: {} });
+  const missed = mount('GameOverModal', { status: 'missed-catch', level: 2, finalScore: 650, maxCombo: 1, stats: {} });
+  assert.equal(find(normal, node => node.props.id === 'result-title').children[0], 'Game Over');
+  assert.equal(find(missed, node => node.props.id === 'result-title').children[0], 'bea fucking died lol');
+  assert.notEqual(find(normal, node => node.props.className === 'result-art').props['aria-label'], find(missed, node => node.props.className === 'result-art').props['aria-label']);
+  normal.cleanup(); missed.cleanup();
+});
+test('letter backdrop portals to body and covers the viewport without a transform animation', () => {
+  const app = mount('OpenLetterModal', { onClose() {}, onStartGame() {} });
+  assert.equal(app.tree.type, 'portal'); assert.equal(app.tree.props.container, app.sandbox.document.body);
+  const css = vm.runInContext('introStyles', app.sandbox);
+  const overlay = css.match(/\.letter-overlay\{([^}]+)\}/)[1];
+  for (const rule of ['position:fixed', 'inset:0', 'width:100vw', 'height:100vh', 'height:100dvh', 'z-index:50']) assert.ok(overlay.includes(rule));
+  assert.ok(overlay.includes('animation:backdrop-reveal')); assert.ok(!overlay.includes('transform:'));
+  const backdropAnimation = css.match(/@keyframes backdrop-reveal\{(.*?)\}\}/s)[1];
+  assert.ok(!backdropAnimation.includes('transform')); app.cleanup();
+});
+
+test('both losses commit their payload and mount a body-level modal over an inert canvas', () => {
+  for (const status of ['lose', 'missed-catch']) {
+    const app = mount('App'); component(app, 'IntroScreen').props.onStartGame(); app.render();
+    component(app, 'CatchingGame').props.onGameEnd({ status, finalScore: 725 }); app.render();
+    const modal = component(app, 'GameOverModal'); assert.ok(modal); assert.equal(modal.props.status, status);
+    assert.equal(modal.props.finalScore, 725);
+    assert.ok(find(app, node => node.props.inert === '' && node.props['aria-hidden'] === true));
+    const rendered = mount('GameOverModal', modal.props);
+    assert.equal(rendered.tree.type, 'portal'); assert.equal(rendered.tree.props.container, rendered.sandbox.document.body);
+    assert.equal(find(rendered, node => node.props.role === 'dialog').props['aria-modal'], 'true');
+    const css = vm.runInContext('introStyles', rendered.sandbox);
+    const overlay = css.match(/\.result-screen\{([^}]+)\}/)[1];
+    for (const rule of ['position:fixed', 'inset:0', 'z-index:100', 'width:100vw', 'height:100dvh']) assert.ok(overlay.includes(rule));
+    rendered.cleanup(); app.cleanup();
+  }
+});
+test('special loss artwork shows the fallen girl with her outfit in a deep red puddle', () => {
+  const app = mount('FallenGirl');
+  assert.ok(find(app, node => node.type === 'path' && node.props.fill === '#8b243b'));
+  const character = component(app, 'Character'); assert.equal(character.props.girl, true); assert.equal(character.props.fallen, true);
+  assert.ok(find(app, node => node.props.transform?.includes('rotate(-90)'))); app.cleanup();
+});
+
+test('narrator cards identify Bea and anchor to the viewport with readable responsive text', () => {
+  const app = mount('NarratorMessage', { message: { id: 1, text: 'Picked just for you!' } });
+  const speaker = find(app, node => node.props.className === 'narrator-speaker');
+  assert.equal(speaker.children[1], 'A NOTE FROM BEA');
+  const card = find(app, node => node.props.className === 'narrator-card');
+  assert.equal(card.props.style.animationDuration, '2.4s');
+  assert.equal(find(app, node => node.type === 'p').children[0], 'Picked just for you!');
+  assert.equal(app.tree.props['aria-live'], 'polite');
+  const css = vm.runInContext('introStyles', app.sandbox);
+  const anchor = css.match(/\.narrator-anchor\{([^}]+)\}/)[1];
+  for (const rule of ['position:fixed', 'left:50%', 'top:clamp(', 'pointer-events:none']) assert.ok(anchor.includes(rule));
+  assert.ok(css.includes('clamp(24px,4.7vw,34px)')); assert.ok(css.includes('.narrator-card{animation:none!important;opacity:1;transform:none}'));
+  app.cleanup();
+  const paused = mount('NarratorMessage', { message: { id: 2, text: 'My favorite sunshine.' }, paused: true });
+  assert.equal(find(paused, node => node.props.className === 'narrator-card').props.style.animationPlayState, 'paused');
+  paused.cleanup();
+  const absent = mount('NarratorMessage', { message: null }); assert.equal(absent.tree, null); absent.cleanup();
+});
+
+test('global viewport stays clipped while letter and result cards can scroll internally', () => {
+  const app = mount('App'); const css = vm.runInContext('introStyles', app.sandbox);
+  for (const selector of ['html,body,#root', '.app-shell', '.game-screen']) {
+    const rule = css.slice(css.indexOf(selector + '{')).split('}')[0];
+    assert.ok(rule.includes('overflow:hidden'), selector);
+  }
+  for (const selector of ['.designed-letter', '.result-screen']) {
+    const rule = css.slice(css.indexOf(selector + '{')).split('}')[0];
+    assert.ok(rule.includes('overflow-y:auto'), selector);
+  }
+  assert.ok(css.includes('.intro-scene,.game-screen{animation:scene-fade-in'));
+  assert.ok(css.includes('.result-screen{animation:backdrop-reveal'));
+  assert.ok(css.includes('@media(prefers-reduced-motion:reduce)'));
+  app.cleanup();
+});
+test('application source has no debug logging, literal canvas text, or duplicate critical copy', () => {
+  for (const file of files.filter(file => file !== 'src/gameConfig.js')) {
+    const content = fs.readFileSync(path.join(root, file), 'utf8');
+    assert.ok(!/console\.(log|debug|info)\s*\(/.test(content), file);
+    assert.ok(!/\.fillText\(\s*['"`]/.test(content), file);
+    for (const text of ['Just because...', 'bea fucking died lol', 'Game Over']) assert.ok(!content.includes(text), `${file}: ${text}`);
+  }
+  const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  const script = html.match(/<script type="text\/babel"[^>]*>([\s\S]*?)<\/script>/)[1];
+  assert.ok(script.indexOf('const GAME_CONFIG') < script.indexOf('function App'));
 });
 
 console.log(`${tests.length} interface checks passed:\n${tests.map(name => `- ${name}`).join('\n')}`);

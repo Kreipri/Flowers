@@ -77,13 +77,18 @@ const GAME_CONFIG = {
       countdownTitle: 'YOUR LITTLE MEADOW AWAITS', countdownCopy: 'Catch the sunshine. Leave the rain.',
       pauseTitle: 'A little breather.', pauseCopy: 'Your meadow will be right here.',
       resume: 'Keep catching', back: 'Back to your letter',
-      sweetMessages: ['You make me bloom!', 'My favorite sunshine. ♡', 'Picked just for you!', 'You caught a little joy!', 'Life is sweeter with you.', 'A little love, always.'],
+      narratorLabel: 'A NOTE FROM BEA',
+      narratorMessages: ['You make me bloom!', 'My favorite sunshine. ♡', 'Picked just for you!', 'You caught a little joy!', 'Life is sweeter with you.', 'A little love, always.'],
     },
     result: {
       winEyebrow: 'RIGHT WHERE YOU BELONG', loseEyebrow: 'EVEN FLOWERS NEED A LITTLE RAIN',
       winArt: 'A boy with solid black side-swept bangs in a grey top and a girl with wavy black hair in a charcoal sweater and white collar standing side-by-side beneath a heart',
-      loseArt: 'A gentle rain cloud watering a little flower',
-      winTitle: 'You Won!', loseTitle: 'A fresh start?',
+      loseArt: 'A wilted flower beneath a gentle rain cloud',
+      missedEyebrow: 'ONE LAST CATCH, MISSED',
+      missedTitle: 'bea fucking died lol',
+      missedCopy: 'She slipped past your arms.',
+      missedArt: 'A chibi girl lying down in a stylized, cartoonish puddle of deep red blood',
+      winTitle: 'You Won!', loseTitle: 'Game Over',
       winCopy: 'I was falling in love…\nand you were there to catch me.',
       loseCopy: 'A little rain, a little rest.\nLet’s find the sunshine again.',
       best: 'YOUR NEW SUNSHINE BEST', total: 'TOTAL SUNSHINE GATHERED',
@@ -96,7 +101,7 @@ const GAME_CONFIG = {
     roundTarget: 500, finaleSeconds: 30, finalePause: 1.2, countdown: 3, lives: 3,
     baseSpeed: 260, speedVariation: 90, speedPerSecond: 2.5,
     speedMultiplierPerLevel: 1.6, spawnMultiplierPerLevel: 1.55, hazardStepPerLevel: .7, spawnInterval: .5,
-    girlSpeedBoost: 1.18, bubbleSeconds: 1.6, bubbleRise: 38, maxBubbles: 3,
+    finalCharacterHalfWidth: 40, finalDropEdgePadding: 12, girlSpeedBoost: 1.18, narratorSeconds: 2.4, narratorRise: 14,
   },
   intro: { bouquetArrivalMs: 900, bouquetZoomMs: 650, launchMs: 1400, paperRevealMs: 1700 },
 };
@@ -214,6 +219,28 @@ class SoundEngine {
     });
   }
 
+  // A short falling chime for either defeat. This method must exist: a missing
+  // end sound previously threw before the result callback could render the UI.
+  playDefeat() {
+    if (this.muted) return;
+    this.init();
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    [330, 277, 220].forEach((frequency, index) => {
+      const start = now + index * .14;
+      const oscillator = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(frequency, start);
+      gain.gain.setValueAtTime(.12, start);
+      gain.gain.exponentialRampToValueAtTime(.001, start + .35);
+      oscillator.connect(gain);
+      gain.connect(this.ctx.destination);
+      oscillator.start(start);
+      oscillator.stop(start + .36);
+    });
+  }
+
   // Uplifting victory harp
   playVictory() {
     if (this.muted) return;
@@ -298,9 +325,10 @@ const sound = new SoundEngine();
 
 // SVG menus and Canvas sprites share the same hair silhouettes.
 // Uneven side-swept bangs for the boy; side-parted, medium waves for the girl.
-// Both are filled solid black, without highlights.
+// A single semicircular arc keeps the boy’s crown perfectly round; only his
+// bangs are textured. Both hairstyles are solid black, without highlights.
 const CHARACTER_HAIR = {
-  boy: 'M-30-9L-32-23L-28-26L-30-34L-22-34L-19-42L-13-40Q-2-52 7-45L15-48L17-43Q31-42 32-25L30-7L24-16L20-27Q12-18 2-14L5-23Q-6-11-18-9L-14-19L-25-11L-26-3Z',
+  boy: 'M-30-19A30 30 0 0 1 30-19L30-7L24-16L20-27Q12-18 2-14L5-23Q-6-11-18-9L-14-19L-25-11L-26-3Z',
   girlBack: 'M-29-22Q-40 0-32 14Q-41 31-25 43Q-19 48-13 40L19 43Q38 39 32 22Q43 6 31-9Q33-43 4-47Q-23-50-29-22Z',
   girlFront: 'M-29-11Q-37-47-2-49Q31-51 30-10L24-16Q13-22 7-37Q-2-18-29-11Z',
 };
@@ -357,7 +385,7 @@ function Bouquet({ front = false }) {
   </svg>;
 }
 
-function Character({ girl = false, x = 0, y = 0, size = 1 }) {
+function Character({ girl = false, fallen = false, x = 0, y = 0, size = 1 }) {
   const top = girl ? CHARACTER_STYLE.girlTop : CHARACTER_STYLE.guyTop;
   return <g transform={`translate(${x} ${y}) scale(${size})`}>
     {girl && <path d={CHARACTER_HAIR.girlBack} fill={CHARACTER_STYLE.hair}/>}
@@ -368,8 +396,17 @@ function Character({ girl = false, x = 0, y = 0, size = 1 }) {
     <circle cy="-14" r="29" fill="#f2cfb8"/>
     <path d={girl ? CHARACTER_HAIR.girlFront : CHARACTER_HAIR.boy} fill={CHARACTER_STYLE.hair}/>
     <ellipse cx="-17" cy="-5" rx="6" ry="3.5" fill={CHARACTER_STYLE.blush}/><ellipse cx="17" cy="-5" rx="6" ry="3.5" fill={CHARACTER_STYLE.blush}/>
-    <path d="M-12-9q4-6 8 0M5-9q4-6 8 0M-4 0q4 5 8 0" fill="none" stroke="#745c59" strokeWidth="2.5" strokeLinecap="round"/>
+    <path d={fallen ? 'M-12-9h8M5-9h8M-3 2h6' : 'M-12-9q4-6 8 0M5-9q4-6 8 0M-4 0q4 5 8 0'} fill="none" stroke="#745c59" strokeWidth="2.5" strokeLinecap="round"/>
     {girl && <path d={GIRL_COLLAR} fill={CHARACTER_STYLE.collar}/>}
+  </g>;
+}
+
+// Stylized flat-vector failed-catch scene; no anatomical injury details.
+function FallenGirl() {
+  return <g>
+    <path d="M58 135C41 120 73 112 96 115C121 101 147 112 168 116C199 111 224 123 218 136C241 145 216 163 188 158C163 170 141 159 120 163C91 173 64 156 58 150C39 151 37 140 58 135Z" fill="#8b243b"/>
+    <ellipse cx="49" cy="161" rx="9" ry="4" fill="#8b243b"/><ellipse cx="231" cy="146" rx="6" ry="3" fill="#8b243b"/>
+    <g transform="translate(141 118) rotate(-90)"><Character girl fallen size={.95}/></g>
   </g>;
 }
 
@@ -399,7 +436,9 @@ function OpenLetterModal({ onStartGame, onClose }) {
     return () => { document.removeEventListener('keydown', handleKey); previousFocus?.focus(); };
   }, [onClose]);
   const text = TEXT_CONTENT.letter;
-  return <div className="letter-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+  // Portal to body: fixed backdrop must never inherit the intro's overflow
+  // clipping, isolation, or any animated bouquet transform.
+  return ReactDOM.createPortal(<div className="letter-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
     <section ref={letterRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="letter-title" className="designed-letter custom-scrollbar">
       <button className="letter-close" onClick={onClose} aria-label={TEXT_CONTENT.controls.closeLetter}>{TEXT_CONTENT.symbols.close}</button>
       <svg className="letter-flower" viewBox="-50 -50 100 100" aria-hidden="true"><Flower size={.8}/></svg>
@@ -413,7 +452,7 @@ function OpenLetterModal({ onStartGame, onClose }) {
       <p className="letter-controls">{text.controls}</p>
       <p className="letter-signoff">{text.signoff}</p>
     </section>
-  </div>;
+  </div>, document.body);
 }
 
 const introStyles = `
@@ -421,6 +460,7 @@ const introStyles = `
 button{font:inherit}
 button:focus-visible{outline:3px solid #a75468;outline-offset:5px}
 button{touch-action:manipulation}
+html,body,#root{width:100%;height:100%;overflow:hidden;overscroll-behavior:none}
 body{margin:0;color:#6d5a60;font-family:Quicksand,sans-serif;background:#f8f1e9}
 .eyebrow{font-size:10px;font-weight:700;letter-spacing:.22em;color:#9b7a78}
 .intro-scene{position:relative;isolation:isolate;min-height:100svh;height:100dvh;overflow:hidden;display:grid;place-items:center;background:#f8f1e9;color:#6d5a60;font-family:Quicksand,sans-serif}
@@ -429,7 +469,7 @@ body{margin:0;color:#6d5a60;font-family:Quicksand,sans-serif;background:#f8f1e9}
 .intro-scene:after{right:-180px;bottom:8%}
 .intro-heading{position:absolute;top:8%;text-align:center}
 .intro-stack{position:relative;isolation:isolate;width:min(90vw,500px);height:min(98vw,548px);margin-top:60px}
-.intro-title{position:absolute;z-index:0;left:50%;top:8%;width:100vw;transform:translateX(-50%);margin:0;text-align:center;font:800 clamp(64px,13.5vw,190px)/1 Fredoka,Quicksand,sans-serif;letter-spacing:-.055em;color:#d8afa7;pointer-events:none;white-space:nowrap}
+.intro-title{position:absolute;z-index:0;left:50%;top:-14%;width:100vw;transform:translateX(-50%);margin:0;text-align:center;font:800 clamp(64px,13.5vw,190px)/1 Fredoka,Quicksand,sans-serif;letter-spacing:-.055em;color:#d8afa7;pointer-events:none;white-space:nowrap}
 .bouquet-layer{position:absolute;inset:0;pointer-events:none}
 .bouquet-layer svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 14px 12px #9d7d5e12)}
 .bouquet-back{z-index:1}
@@ -456,8 +496,8 @@ body{margin:0;color:#6d5a60;font-family:Quicksand,sans-serif;background:#f8f1e9}
 .intro-footer{position:absolute;bottom:35px;left:20px;right:20px;text-align:center;font-size:12px;color:#977e7d}
 .intro-footer strong{display:block;font-weight:600;color:#8d6b70;margin-bottom:9px}
 .intro-footer small{font-size:10px;letter-spacing:.1em}
-.letter-overlay{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px;background:#77676e50;backdrop-filter:blur(8px);animation:letter-reveal .3s ease-out}
-.designed-letter{position:relative;width:min(100%,530px);max-height:min(86dvh,800px);overflow-y:auto;word-break:break-word;overflow-wrap:anywhere;padding:40px clamp(24px,6vw,48px) 28px;border:1px solid #fffdf5;border-radius:30px;background:#fffbf3;box-shadow:0 25px 80px #80625d25;color:#79676a;line-height:1.85;user-select:text}
+.letter-overlay{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;z-index:50;overflow-y:auto;overscroll-behavior:contain;display:grid;place-items:center;padding:20px;background:#77676e50;backdrop-filter:blur(8px);animation:backdrop-reveal .3s ease-out}
+.designed-letter{animation:letter-reveal .3s ease-out;position:relative;width:min(100%,530px);max-height:min(86dvh,800px);overflow-y:auto;word-break:break-word;overflow-wrap:anywhere;padding:40px clamp(24px,6vw,48px) 28px;border:1px solid #fffdf5;border-radius:30px;background:#fffbf3;box-shadow:0 25px 80px #80625d25;color:#79676a;line-height:1.85;user-select:text}
 .letter-flower{display:block;width:65px;height:65px;margin:0 auto 18px}
 .designed-letter .eyebrow{text-align:center;font-size:9px}
 .designed-letter h2{font:600 38px/1.2 Caveat,cursive;color:#a65c70;margin:20px 0}
@@ -471,7 +511,7 @@ body{margin:0;color:#6d5a60;font-family:Quicksand,sans-serif;background:#f8f1e9}
 .designed-letter .letter-controls{font-size:10px;text-align:center;margin:14px 0}
 .designed-letter .letter-signoff{font:24px Caveat,cursive;text-align:right;margin:25px 0 0;color:#ad8090}
 .game-screen{position:relative;width:100%;height:100dvh;background:#fbf3e7;overflow:hidden;touch-action:none;user-select:none}
-.game-hud{position:absolute;top:22px;left:24px;right:24px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;pointer-events:none}
+.game-hud{z-index:10;position:absolute;top:22px;left:24px;right:24px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;pointer-events:none}
 .game-hud>*{pointer-events:auto}
 .hud-card{padding:14px 18px;background:#fffcf5ed;border:1px solid #fffdf8;border-radius:24px;box-shadow:0 8px 24px #b2947512}
 .score-line{display:flex;align-items:center;gap:9px;font-size:25px;font-weight:700;color:#95725b}
@@ -487,21 +527,21 @@ body{margin:0;color:#6d5a60;font-family:Quicksand,sans-serif;background:#f8f1e9}
 .game-overlay{position:absolute;inset:0;display:grid;place-content:center;gap:20px;text-align:center;background:#faf4e9a8;backdrop-filter:blur(4px);padding:24px}
 .game-overlay h2{font:500 64px Fredoka,sans-serif;color:#b27687;margin:0}
 .game-overlay p{font-size:13px;color:#977f81;margin:0}
-.result-screen{height:100dvh;overflow-y:auto;display:flex;align-items:safe center;justify-content:center;padding:24px;background:#f8f1e9}
+.result-screen{position:fixed;inset:0;z-index:100;width:100vw;height:100vh;height:100dvh;overflow-y:auto;display:flex;align-items:safe center;justify-content:center;padding:24px;background:#6d5a608c;backdrop-filter:blur(8px)}
 .result-card{width:min(100%,450px);padding:28px 30px;border-radius:36px;background:#fffbf4;box-shadow:0 20px 70px #a68a6f18;text-align:center}
 .result-art{width:100%;max-width:280px;height:200px;margin:auto}
-.result-card h1{font:600 48px Fredoka,sans-serif;color:#ad6b7f;margin:6px 0 12px}
+.result-card h1{overflow-wrap:anywhere;font:600 48px Fredoka,sans-serif;color:#ad6b7f;margin:6px 0 12px}
 .result-copy{font:500 25px/1.25 Caveat,cursive;color:#aa8088}
 .result-score{background:#f5edde;border-radius:24px;padding:18px;margin:24px 0}
 .result-score strong{display:block;font:500 40px Fredoka,sans-serif;color:#b59361}
 .result-score small{font-size:10px;letter-spacing:.1em;color:#9c8675}
-.result-stats{display:flex;justify-content:center;gap:18px;font-size:11px;color:#99847e;margin:16px 0 24px}
+.result-stats{flex-wrap:wrap;display:flex;justify-content:center;gap:18px;font-size:11px;color:#99847e;margin:16px 0 24px}
 .secondary-button{border:0;background:transparent;color:#987980;cursor:pointer;padding:16px;font-size:12px}
 .best-badge{display:inline-block;background:#f2e7ce;color:#aa8d55;border-radius:20px;padding:6px 12px;font-size:10px;margin:10px}
 .custom-scrollbar{scrollbar-width:thin;scrollbar-color:#d9b5af transparent}
 @media(max-width:540px){.intro-heading{top:9%;font-size:8px}
 .intro-stack{margin-top:25px}
-.intro-title{top:17%;font-size:13.4vw}
+.intro-title{top:-12%;font-size:13.4vw}
 .envelope-track{scale:.76;transform-origin:center 200px}
 .intro-footer{bottom:32px;font-size:11px}
 .game-hud{top:14px;left:12px;right:12px;gap:7px;flex-wrap:wrap}
@@ -514,9 +554,9 @@ body{margin:0;color:#6d5a60;font-family:Quicksand,sans-serif;background:#f8f1e9}
 .result-card{padding:24px}
 .result-card h1{font-size:40px}
 }
-@media(max-height:650px){.intro-stack{width:min(75vw,350px);height:min(82vw,385px);margin-top:35px}
+@media(max-height:650px){.intro-stack{width:min(72vw,54dvh,350px);height:min(80vw,59dvh,385px);margin-top:90px}
 .intro-heading{top:4%}
-.intro-title{top:8%}
+.intro-title{top:-15%;font-size:min(12vw,12dvh,90px)}
 .envelope-track{scale:.65;transform-origin:center 150px}
 .intro-footer{bottom:12px}
 .result-screen{align-items:flex-start}
@@ -545,6 +585,7 @@ body{margin:0;color:#6d5a60;font-family:Quicksand,sans-serif;background:#f8f1e9}
 @keyframes paper-reveal{0%,18%{opacity:0;transform:translateY(12px) scale(.85);clip-path:inset(0 0 16px 0)}30%{opacity:1;transform:translateY(-12px) scale(.85);clip-path:inset(0)}70%{opacity:1;transform:translateY(-112px) scale(1);clip-path:inset(0)}100%{opacity:1;transform:translateY(-142px) scale(1.5);clip-path:inset(0)}}
 .designed-letter .letter-script,.result-copy{white-space:pre-line}
 .designed-letter{transform-origin:center bottom}
+@keyframes backdrop-reveal{from{opacity:0}to{opacity:1}}
 @keyframes letter-reveal{from{opacity:.3;transform:translateY(24px) scale(.82)}to{opacity:1;transform:none}}
 /* Make content editable even when a replacement message is longer than expected. */
 .envelope-paper span,.envelope-paper strong{overflow-wrap:anywhere}
@@ -557,6 +598,25 @@ body{margin:0;color:#6d5a60;font-family:Quicksand,sans-serif;background:#f8f1e9}
 .intro-stack[data-state="launching"] .bouquet-layer,.intro-stack[data-state="interactive"] .bouquet-layer,.intro-stack[data-state="opening"] .bouquet-layer,.intro-stack[data-state="opened"] .bouquet-layer{transform:translateY(-18px) scale(1.08)}
 @keyframes bouquet-arrive{from{opacity:0;transform:translateY(65px) scale(.78)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes bouquet-zoom{from{transform:translateY(0) scale(1)}to{transform:translateY(-18px) scale(1.08)}}
+.result-card[data-status="missed-catch"] h1{font-size:clamp(28px,7vw,38px)}
+/* A single off-screen narrator card, anchored to the viewport rather than the
+   catcher. The lower clamp clears the mobile HUD even when its controls wrap. */
+.narrator-anchor{position:fixed;z-index:5;top:clamp(142px,23dvh,210px);left:50%;transform:translateX(-50%);width:min(580px,calc(100vw - 32px));pointer-events:none;text-align:center}
+.narrator-card{padding:20px 28px 24px;border:2px solid #f0d7d8;border-radius:28px;background:#fffbf3;box-shadow:0 12px 35px #9b6c7a20;animation:narrator-note 2.4s both cubic-bezier(.22,.61,.36,1)}
+.narrator-speaker{display:flex;justify-content:center;align-items:center;gap:8px;color:#ad7182;font:700 10px/1.4 Quicksand,sans-serif;letter-spacing:.18em}
+.narrator-card p{margin:10px 0 0;color:#955e73;font:500 clamp(24px,4.7vw,34px)/1.25 Fredoka,Quicksand,sans-serif;overflow-wrap:anywhere}
+@keyframes narrator-note{0%{opacity:0;transform:translateY(10px) scale(.94)}10%,35%{opacity:1;transform:translateY(0) scale(1)}65%{opacity:1;transform:translateY(-5px) scale(1)}100%{opacity:0;transform:translateY(calc(-1 * var(--narrator-rise))) scale(1)}}
+@media(max-width:540px){.narrator-card{padding:17px 20px 20px;border-radius:24px}.narrator-speaker{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.narrator-card{animation:none!important;opacity:1;transform:none}}
+/* A stable viewport and opacity-only screen entrances prevent page reflow and
+   avoid transformed ancestors that could trap fixed narrator/modal layers. */
+.app-shell{position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;background:#f8f1e9}
+.intro-scene,.game-screen{animation:scene-fade-in .3s ease-out both}
+.result-screen{animation:backdrop-reveal .28s ease-out both}
+.result-card{animation:result-reveal .32s ease-out both}
+.game-overlay,.finale-message{animation:scene-fade-in .22s ease-out both}
+@keyframes scene-fade-in{from{opacity:0}to{opacity:1}}
+@keyframes result-reveal{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 `;
 
 // Intro state machine: arriving -> tucked -> zooming -> launching -> interactive
@@ -631,6 +691,20 @@ const ITEM_TYPES = [
   { id: 'thorn', points: 0, color: '#bc9ba8', weight: 8 },
 ];
 
+// Audio is decorative: unsupported/blocked Web Audio must never interrupt
+// collision handling or prevent a terminal state from reaching React.
+function playGameSound(method, ...args) {
+  try { sound[method](...args); }
+  catch { /* Continue rendering the game/result even when audio is unavailable. */ }
+}
+
+// The sprite is drawn around its center, so reserve its half-width at BOTH
+// edges. A stored uniform random fraction preserves the surprise on resize.
+function finalDropX(width, fraction) {
+  const padding = Math.min(width / 2, RULES.finalCharacterHalfWidth + RULES.finalDropEdgePadding);
+  return padding + fraction * Math.max(0, width - padding * 2);
+}
+
 function readBestScore() {
   try { return Number(localStorage.getItem('smiley_highscore')) || 0; }
   catch { return 0; }
@@ -684,7 +758,7 @@ function drawCharacter(ctx, girl = false) {
 function drawItem(ctx, item) {
   ctx.save(); ctx.translate(item.x, item.y); ctx.rotate(item.angle || 0);
   const id = item.id;
-  if (id === 'girl') drawCharacter(ctx, true);
+  if (id === 'girl') { ctx.scale(item.scale ?? 1, item.scale ?? 1); drawCharacter(ctx, true); }
   else if (id === 'heart') drawHeart(ctx, 0, 3, .9, item.color);
   else if (id === 'sunflower') {
     for (let i = 0; i < 10; i++) {
@@ -738,21 +812,16 @@ function drawMeadow(ctx, width, height) {
   }
 }
 
-function drawSpeechBubble(ctx, bubble, width) {
-  const progress = bubble.age / RULES.bubbleSeconds;
-  ctx.save();
-  // Fade in quickly, then drift upward and fade out over a 1.6-second lifetime.
-  ctx.globalAlpha = Math.min(1, bubble.age / .12) * Math.min(1, (1 - progress) / .35);
-  ctx.font = '600 12px Quicksand, sans-serif';
-  const bubbleWidth = Math.min(width - 24, ctx.measureText(bubble.text).width + 30);
-  const x = Math.max(12, Math.min(width - bubbleWidth - 12, bubble.x - bubbleWidth / 2));
-  const y = bubble.y - progress * RULES.bubbleRise;
-  fillRound(ctx, x, y, bubbleWidth, 36, 15, '#fffcf5');
-  ctx.fillStyle = '#fffcf5'; ctx.beginPath(); ctx.moveTo(x + bubbleWidth / 2 - 6, y + 34);
-  ctx.lineTo(x + bubbleWidth / 2, y + 43); ctx.lineTo(x + bubbleWidth / 2 + 6, y + 34); ctx.fill();
-  ctx.fillStyle = '#a3687c'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText(bubble.text, x + bubbleWidth / 2, y + 18, bubbleWidth - 20);
-  ctx.restore();
+// Screen-level narrator UI: no player coordinates, canvas text metrics, or
+// collision geometry are involved. One keyed card replaces the previous note.
+function NarratorMessage({ message, paused = false }) {
+  if (!message) return null;
+  return <aside className="narrator-anchor" aria-live="polite" aria-atomic="true" style={{ visibility: paused ? 'hidden' : undefined }}>
+    <div key={message.id} className="narrator-card" style={{ animationDuration: `${RULES.narratorSeconds}s`, animationPlayState: paused ? 'paused' : 'running', '--narrator-rise': `${RULES.narratorRise}px` }}>
+      <span className="narrator-speaker"><Icon name="heart" size={14}/>{TEXT_CONTENT.game.narratorLabel}</span>
+      <p>{message.text}</p>
+    </div>
+  </aside>;
 }
 
 function CatchingGame({ level = 1, initialScore = 0, onGameEnd, onBackToIntro, soundMuted, onToggleSound }) {
@@ -761,6 +830,7 @@ function CatchingGame({ level = 1, initialScore = 0, onGameEnd, onBackToIntro, s
   const endRef = useRef(onGameEnd);
   endRef.current = onGameEnd;
   const [hud, setHud] = useState({ score: initialScore, roundScore: 0, lives: RULES.lives, combo: 1, remaining: FINALE_SECONDS, finale: null, countdown: RULES.countdown });
+  const [narrator, setNarrator] = useState(null);
   const [isPaused, setIsPaused] = useState(false);
   const pausedRef = useRef(false);
   const togglePause = () => { pausedRef.current = !pausedRef.current; setIsPaused(pausedRef.current); };
@@ -777,7 +847,7 @@ function CatchingGame({ level = 1, initialScore = 0, onGameEnd, onBackToIntro, s
     const state = {
       width: 0, height: 0, elapsed: 0, countdown: RULES.countdown, spawnTimer: .3 / spawnMultiplier,
       score: initialScore, startingScore: initialScore, level, difficultyMultiplier, spawnMultiplier, hazardMultiplier, lives: RULES.lives, combo: 1, active: true, finale: null, finaleTimer: 0,
-      items: [], particles: [], bubbles: [], damage: 0, keys: { left: false, right: false },
+      items: [], particles: [], narrator: null, narratorId: 0, lastNarratorText: null, damage: 0, keys: { left: false, right: false },
       player: { x: 0, targetX: 0, y: 0 },
       stats: { sunflowers: 0, stars: 0, hearts: 0, sparkles: 0, maxCombo: 1 },
     };
@@ -793,10 +863,16 @@ function CatchingGame({ level = 1, initialScore = 0, onGameEnd, onBackToIntro, s
       state.player.x = state.width ? state.player.x / previousWidth * width : width / 2;
       state.player.targetX = state.player.x;
       state.width = width; state.height = height; state.player.y = height - 110;
-      state.items.forEach(item => { item.x = item.id === 'girl' ? width / 2 : item.x / previousWidth * width; });
+      state.items.forEach(item => {
+        if (item.id === 'girl') {
+          item.x = finalDropX(width, item.dropFraction ?? item.x / previousWidth);
+          item.scale = Math.min(1, width / (RULES.finalCharacterHalfWidth * 2));
+        } else item.x = item.x / previousWidth * width;
+      });
     };
     resize();
     const setKey = (e, pressed) => {
+      if (!state.active) return;
       if (['ArrowLeft', 'ArrowRight', 'a', 'A', 'd', 'D'].includes(e.key)) {
         e.preventDefault(); state.keys[['ArrowLeft', 'a', 'A'].includes(e.key) ? 'left' : 'right'] = pressed;
       }
@@ -807,29 +883,38 @@ function CatchingGame({ level = 1, initialScore = 0, onGameEnd, onBackToIntro, s
     const visibility = () => { if (document.hidden) blur(); };
     window.addEventListener('resize', resize); window.addEventListener('keydown', keyDown); window.addEventListener('keyup', keyUp);
     window.addEventListener('blur', blur); document.addEventListener('visibilitychange', visibility);
-    // Terminal transition: active -> win/lose. Mark inactive BEFORE notifying
+    // Terminal transition: active -> win/lose/missed-catch. Mark inactive BEFORE notifying
     // React so no later frame can score, finish twice, or emit another bubble.
+    let animationId = null;
     const finish = status => {
       if (!state.active) return;
       state.active = false;
+      state.narrator = null; setNarrator(null);
+      cancelAnimationFrame(animationId);
+      animationId = null;
+      state.keys.left = false; state.keys.right = false;
       const isNewBest = state.score > readBestScore();
       if (isNewBest) { try { localStorage.setItem('smiley_highscore', String(state.score)); } catch { /* Private browsing may disable storage. */ } }
-      if (status === 'win') sound.playVictory(); else sound.playDefeat();
+      // Commit the result first; a failed sound must never leave a frozen canvas.
       endRef.current({ status, level, finalScore: state.score, roundScore: state.score - state.startingScore, maxCombo: state.stats.maxCombo, stats: { ...state.stats }, isNewBest });
+      playGameSound('stopBgm');
+      playGameSound(status === 'win' ? 'playVictory' : 'playDefeat');
     };
     // Round state machine: normal (null) -> waiting -> falling -> win.
-    // A missed girl loops falling -> waiting; losing all lives in normal -> lose.
+    // Missing the girl ends the round as missed-catch; losing all lives in normal
+    // ends it as lose. These are separate terminal outcomes, with separate UI.
     // Clear every normal item/effect atomically so hazards cannot hit in finale.
     const beginFinale = () => {
       if (state.finale) return;
       state.finale = 'waiting'; state.finaleTimer = 0;
-      state.items = []; state.particles = []; state.bubbles = []; state.damage = 0; publish();
+      state.items = []; state.particles = []; state.narrator = null; setNarrator(null); state.damage = 0; publish();
     };
     const spawnGirl = () => {
       state.finale = 'falling';
       // Use the highest possible ordinary speed in this round, plus 18%. The
       // final drop is always faster, even on tall screens or an early score win.
-      state.items = [{ id: 'girl', x: state.width / 2, y: -75, angle: 0, speed: (RULES.baseSpeed + RULES.speedVariation + FINALE_SECONDS * RULES.speedPerSecond) * difficultyMultiplier * RULES.girlSpeedBoost }];
+      const dropFraction = Math.random();
+      state.items = [{ id: 'girl', dropFraction, x: finalDropX(state.width, dropFraction), scale: Math.min(1, state.width / (RULES.finalCharacterHalfWidth * 2)), y: -75, angle: 0, speed: (RULES.baseSpeed + RULES.speedVariation + FINALE_SECONDS * RULES.speedPerSecond) * difficultyMultiplier * RULES.girlSpeedBoost }];
       publish();
     };
     const spawnItem = () => {
@@ -839,14 +924,16 @@ function CatchingGame({ level = 1, initialScore = 0, onGameEnd, onBackToIntro, s
       const type = ITEM_TYPES.find(item => { weight -= itemWeight(item); return weight < 0; }) || ITEM_TYPES[0];
       state.items.push({ ...type, x: 35 + Math.random() * Math.max(1, state.width - 70), y: -35, speed: (RULES.baseSpeed + Math.random() * RULES.speedVariation + state.elapsed * RULES.speedPerSecond) * difficultyMultiplier, angle: 0, phase: Math.random() * Math.PI * 2 });
     };
-    let animationId, lastTime = null, lastSecond = FINALE_SECONDS;
+    let lastTime = null, lastSecond = FINALE_SECONDS;
     const frame = now => {
       if (!state.active) return;
-      // Seconds-based integration keeps spawn/bubble/fall timing consistent
+      // Seconds-based integration keeps spawn/narrator/fall timing consistent
       // across refresh rates. Cap large gaps so background throttling cannot
       // teleport items past the catcher on the next visible frame.
       const dt = lastTime === null ? 0 : Math.min((now - lastTime) / 1000, .05);
       lastTime = now;
+      // Guard zero/negative health independently of the collision branch.
+      if (state.lives <= 0) { finish('lose'); return; }
       if (!pausedRef.current) {
         if (state.countdown > 0) {
           const previous = Math.ceil(state.countdown); state.countdown = Math.max(0, state.countdown - dt);
@@ -876,34 +963,50 @@ function CatchingGame({ level = 1, initialScore = 0, onGameEnd, onBackToIntro, s
                 state.score += item.points * state.combo; state.combo = Math.min(8, state.combo + 1);
                 state.stats.maxCombo = Math.max(state.stats.maxCombo, state.combo);
                 state.stats[{ sunflower: 'sunflowers', star: 'stars', heart: 'hearts', sparkle: 'sparkles' }[item.id]]++;
-                sound.playCatch(state.combo);
-                // Only the first playthrough gets sweet messages. New bubbles
-                // replace the oldest at the cap; simulation time handles their
-                // fade, rise, pause, and removal without orphaned timeout calls.
+                playGameSound('playCatch', state.combo);
+                // Bea narrates only level 1. A new catch replaces the single
+                // active card and restarts its pop/float/fade animation, so a
+                // rapid streak never stacks competing text. Avoid repeating
+                // the previous line when multiple configured choices exist.
                 if (level === 1) {
-                  const messages = TEXT_CONTENT.game.sweetMessages;
-                  if (messages.length) {
-                    state.bubbles.push({ text: messages[Math.floor(Math.random() * messages.length)], x: player.x, y: player.y - 100, age: 0 });
-                    state.bubbles = state.bubbles.slice(-RULES.maxBubbles);
+                  const messages = TEXT_CONTENT.game.narratorMessages;
+                  const alternatives = messages.filter(text => text !== state.lastNarratorText);
+                  const choices = alternatives.length ? alternatives : messages;
+                  if (choices.length) {
+                    const text = choices[Math.floor(Math.random() * choices.length)];
+                    state.lastNarratorText = text;
+                    state.narrator = { id: ++state.narratorId, text, age: 0 };
+                    setNarrator(state.narrator);
                   }
                 }
 
                 for (let j = 0; j < 9; j++) state.particles.push({ x: item.x, y: item.y, vx: (Math.random() - .5) * 120, vy: -30 - Math.random() * 90, life: .7, color: item.color });
                 if (state.score - state.startingScore >= WIN_SCORE_TARGET) { beginFinale(); break; }
               } else {
-                state.lives--; state.combo = 1; state.damage = .3; sound.playHurt();
+                state.lives--; state.combo = 1; state.damage = .3; playGameSound('playHurt');
                 if (state.lives <= 0) { finish('lose'); return; }
               }
               state.items.splice(i, 1); publish();
+            } else if (item.id === 'girl' && item.y > state.height) {
+              // A final miss is terminal the instant her origin crosses the
+              // canvas bottom. Do not retry, deduct hearts, or reset the score.
+              state.items = [];
+              finish('missed-catch');
+              return;
             } else if (item.y > state.height + 80) {
-              // Missing the finale retries the same drop, without adding
-              // hazards or deducting lives/points.
-              if (item.id === 'girl') { state.finale = 'waiting'; state.finaleTimer = 0; state.items = []; publish(); break; }
               if (item.points > 0 && state.combo > 1) { state.combo = 1; publish(); }
               state.items.splice(i, 1);
             }
           }
-          state.bubbles = state.bubbles.filter(bubble => { bubble.age += dt; return bubble.age < RULES.bubbleSeconds; });
+          // Expiry uses simulation seconds so pausing freezes the lifetime too.
+          // React only updates on catch or dismissal, never once per frame.
+          if (state.narrator) {
+            state.narrator.age += dt;
+            if (state.narrator.age >= RULES.narratorSeconds) {
+              state.narrator = null;
+              setNarrator(null);
+            }
+          }
           state.particles = state.particles.filter(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt; return p.life > 0; });
           const second = Math.max(0, Math.ceil(FINALE_SECONDS - state.elapsed));
           if (second !== lastSecond) { lastSecond = second; publish(); }
@@ -920,9 +1023,8 @@ function CatchingGame({ level = 1, initialScore = 0, onGameEnd, onBackToIntro, s
       for (const y of [33, 41]) { ctx.beginPath(); ctx.moveTo(-25, y); ctx.lineTo(25, y); ctx.stroke(); }
       for (const x of [-18, -6, 6, 18]) { ctx.beginPath(); ctx.moveTo(x, 30); ctx.lineTo(x, 47); ctx.stroke(); }
       ctx.restore();
-      state.bubbles.forEach(bubble => drawSpeechBubble(ctx, bubble, state.width));
       if (state.damage > 0) { ctx.fillStyle = `rgba(218,151,161,${state.damage * .6})`; ctx.fillRect(0, 0, state.width, state.height); }
-      animationId = requestAnimationFrame(frame);
+      if (state.active) animationId = requestAnimationFrame(frame);
     };
     animationId = requestAnimationFrame(frame);
     return () => {
@@ -949,6 +1051,7 @@ function CatchingGame({ level = 1, initialScore = 0, onGameEnd, onBackToIntro, s
       <div className="hud-card hud-lives" aria-label={formatText(text.lives, { count: hud.lives })}>{Array.from({ length: RULES.lives }, (_, i) => <span key={i} style={{ opacity: i < hud.lives ? 1 : .2 }}><Icon name="heart"/></span>)}</div>
       <div className="game-actions"><button className="icon-button" onClick={togglePause} aria-label={isPaused ? controls.resume : controls.pause}><Icon name={isPaused ? 'play' : 'pause'}/></button><button className="icon-button" onClick={onToggleSound} aria-label={soundMuted ? controls.unmute : controls.mute}><Icon name={soundMuted ? 'muted' : 'sound'}/></button><button className="icon-button" onClick={backToIntro} aria-label={controls.returnToLetter}><Icon name="home"/></button></div>
     </div>
+    <NarratorMessage message={narrator} paused={isPaused}/>
     {hud.finale && <div className="finale-message" role="status"><h2>{hud.finale === 'waiting' ? text.waitingTitle : text.fallingTitle}</h2><p>{hud.finale === 'waiting' ? text.waitingCopy : text.fallingCopy}</p></div>}
     <div className="game-guidance">{hud.combo > 1 && !hud.finale ? formatText(text.streak, { combo: hud.combo }) : ''}{text.controls}</div>
     {hud.countdown > 0 && !isPaused && <div className="game-overlay" role="status"><p className="eyebrow">{text.countdownTitle}</p><h2>{hud.countdown}</h2><p>{text.countdownCopy}</p></div>}
@@ -958,18 +1061,35 @@ function CatchingGame({ level = 1, initialScore = 0, onGameEnd, onBackToIntro, s
 
 
 
-function GameOverModal({ status, level = 1, finalScore, maxCombo, stats, isNewBest, onPlayAgain, onBackToIntro }) {
+function GameOverModal({ status, level = 1, finalScore = 0, maxCombo = 1, stats = {}, isNewBest, onPlayAgain, onBackToIntro }) {
   const isWin = status === 'win';
+  const isMissedCatch = status === 'missed-catch';
   const text = TEXT_CONTENT.result;
+  const cardRef = useRef(null);
+  useEffect(() => {
+    const previousFocus = document.activeElement;
+    cardRef.current?.focus();
+    const keyDown = event => {
+      if (event.key !== 'Tab' || !cardRef.current) return;
+      const buttons = cardRef.current.querySelectorAll('button');
+      const first = buttons[0], last = buttons[buttons.length - 1];
+      if (event.shiftKey && (document.activeElement === first || document.activeElement === cardRef.current)) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    };
+    document.addEventListener('keydown', keyDown);
+    return () => { document.removeEventListener('keydown', keyDown); previousFocus?.focus(); };
+  }, []);
   useEffect(() => {
     if (isWin && window.confetti && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       window.confetti({ particleCount: 70, spread: 75, origin: { y: .6 }, colors: ['#e4acb3', '#f1d195', '#b7cdb1', '#c1b2d4'], disableForReducedMotion: true });
     }
   }, [isWin]);
-  return <main className="result-screen">
-    <section className="result-card" aria-labelledby="result-title">
-      <p className="eyebrow">{isWin ? text.winEyebrow : text.loseEyebrow}</p>
-      <svg className="result-art" viewBox="0 0 280 200" role="img" aria-label={isWin ? text.winArt : text.loseArt}>
+  // A body portal and fixed positioning put every result above the stopped
+  // canvas, regardless of parent overflow or stacking contexts.
+  return ReactDOM.createPortal(<main className="result-screen">
+    <section ref={cardRef} tabIndex={-1} role="dialog" aria-modal="true" className="result-card" data-status={status} aria-labelledby="result-title">
+      <p className="eyebrow">{isWin ? text.winEyebrow : isMissedCatch ? text.missedEyebrow : text.loseEyebrow}</p>
+      <svg className="result-art" viewBox="0 0 280 200" role="img" aria-label={isWin ? text.winArt : isMissedCatch ? text.missedArt : text.loseArt}>
         <ellipse cx="140" cy="104" rx="91" ry="83" fill={isWin ? '#f6e4df' : '#e9e9e3'}/>
         {isWin ? <>
           <ellipse cx="140" cy="183" rx="72" ry="8" fill="#dec9c330"/>
@@ -978,22 +1098,24 @@ function GameOverModal({ status, level = 1, finalScore, maxCombo, stats, isNewBe
           <g fill="#e2bd7c"><circle cx="56" cy="44" r="4"/><circle cx="226" cy="64" r="3"/></g>
           <path d="M77 32l4 9M214 35l-4 9" stroke="#b8c8a9" strokeWidth="4" strokeLinecap="round"/>
           <Heart x={140} y={41} size={1.2}/><Heart x={67} y={79} size={.35} color="#e6bac1"/><Heart x={214} y={115} size={.4} color="#e6bac1"/>
+        </> : isMissedCatch ? <>
+          <FallenGirl/>
         </> : <>
           <g fill="#b6c3cf"><rect x="83" y="65" width="114" height="45" rx="23"/><circle cx="111" cy="65" r="24"/><circle cx="151" cy="56" r="31"/></g>
           <path d="M113 88q5-6 10 0M154 88q5-6 10 0" stroke="#8393a4" fill="none" strokeWidth="3" strokeLinecap="round"/>
           <path d="M108 120l-4 10M140 119l-4 10M173 120l-4 10" stroke="#a8bfd0" strokeWidth="5" strokeLinecap="round"/>
-          <path d="M140 184V164" stroke="#9fb293" strokeWidth="6" strokeLinecap="round"/><Flower x={140} y={160} size={.45}/>
+          <path d="M140 184Q148 155 127 151" fill="none" stroke="#9fb293" strokeWidth="6" strokeLinecap="round"/><g transform="translate(124 157) rotate(145)"><Flower size={.45} rose/></g>
         </>}
       </svg>
-      <h1 id="result-title" role="status">{isWin ? text.winTitle : text.loseTitle}</h1>
-      <p className="result-copy">{isWin ? text.winCopy : text.loseCopy}</p>
+      <h1 id="result-title" role="status">{isWin ? text.winTitle : isMissedCatch ? text.missedTitle : text.loseTitle}</h1>
+      <p className="result-copy">{isWin ? text.winCopy : isMissedCatch ? text.missedCopy : text.loseCopy}</p>
       {isNewBest && <span className="best-badge">{text.best}</span>}
       <div className="result-score"><small>{text.total}</small><strong>{finalScore}</strong><small>{formatText(text.streak, { level, combo: maxCombo })}</small></div>
       <div className="result-stats"><span>{formatText(text.flowers, { count: stats.sunflowers || 0 })}</span><span>{formatText(text.stars, { count: stats.stars || 0 })}</span><span>{formatText(text.hearts, { count: stats.hearts || 0 })}</span><span>{formatText(text.sparkles, { count: stats.sparkles || 0 })}</span></div>
       <button className="primary-button" onClick={onPlayAgain}>{formatText(text.playAgain, { level: level + 1 })} <span aria-hidden="true">{TEXT_CONTENT.symbols.arrow}</span></button>
       <button className="secondary-button" onClick={onBackToIntro}>{text.back}</button>
     </section>
-  </main>;
+  </main>, document.body);
 }
 
 
@@ -1001,11 +1123,12 @@ function GameOverModal({ status, level = 1, finalScore, maxCombo, stats, isNewBe
 function App() {
   // App owns the session across canvas remounts. Only the round's temporary
   // state (lives, timer, items, streak) belongs inside CatchingGame.
-  const [view, setView] = useState('intro');
+  // Store the view and its result payload together, so an end screen can
+  // never render with a missing or stale result.
+  const [screen, setScreen] = useState({ view: 'intro', result: null });
   const [soundMuted, setSoundMuted] = useState(false);
   const [session, setSession] = useState({ score: 0, level: 0 });
   const [gameKey, setGameKey] = useState(0);
-  const [gameOverData, setGameOverData] = useState(null);
 
   React.useEffect(() => { document.title = TEXT_CONTENT.appTitle; }, []);
 
@@ -1020,7 +1143,7 @@ function App() {
     sound.init();
     setSession(previous => ({ ...previous, level: previous.level + 1 }));
     setGameKey(key => key + 1);
-    setView('game');
+    setScreen({ view: 'game', result: null });
   };
 
   const handleGameEnd = data => {
@@ -1028,8 +1151,7 @@ function App() {
     // earns another 500 points toward its own climax, rather than reusing the
     // accumulated total as an immediately satisfied win condition.
     setSession(previous => ({ ...previous, score: data.finalScore }));
-    setGameOverData(data);
-    setView('end');
+    setScreen({ view: 'end', result: data });
   };
 
   const handleBackToIntro = snapshot => {
@@ -1038,14 +1160,14 @@ function App() {
     if (typeof snapshot?.score === 'number') {
       setSession(previous => ({ ...previous, score: snapshot.score }));
     }
-    setView('intro');
+    setScreen({ view: 'intro', result: null });
   };
 
   return <div className="app-shell">
     <style>{introStyles}</style>
-    {view === 'intro' && <IntroScreen onStartGame={startRound} soundMuted={soundMuted} onToggleSound={handleToggleSound}/>}
-    {view === 'game' && <CatchingGame key={gameKey} level={session.level} initialScore={session.score} onGameEnd={handleGameEnd} onBackToIntro={handleBackToIntro} soundMuted={soundMuted} onToggleSound={handleToggleSound}/>}
-    {view === 'end' && <GameOverModal {...gameOverData} level={session.level} onPlayAgain={startRound} onBackToIntro={() => handleBackToIntro()}/>}
+    {screen.view === 'intro' && <IntroScreen onStartGame={startRound} soundMuted={soundMuted} onToggleSound={handleToggleSound}/>}
+    {screen.view !== 'intro' && <div inert={screen.view === 'end' ? '' : undefined} aria-hidden={screen.view === 'end' ? true : undefined}><CatchingGame key={gameKey} level={session.level} initialScore={session.score} onGameEnd={handleGameEnd} onBackToIntro={handleBackToIntro} soundMuted={soundMuted} onToggleSound={handleToggleSound}/></div>}
+    {screen.view === 'end' && <GameOverModal {...screen.result} level={session.level} onPlayAgain={startRound} onBackToIntro={() => handleBackToIntro()}/>}
   </div>;
 }
 

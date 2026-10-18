@@ -101,6 +101,28 @@ export class SoundEngine {
     });
   }
 
+  // A short falling chime for either defeat. This method must exist: a missing
+  // end sound previously threw before the result callback could render the UI.
+  playDefeat() {
+    if (this.muted) return;
+    this.init();
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    [330, 277, 220].forEach((frequency, index) => {
+      const start = now + index * .14;
+      const oscillator = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(frequency, start);
+      gain.gain.setValueAtTime(.12, start);
+      gain.gain.exponentialRampToValueAtTime(.001, start + .35);
+      oscillator.connect(gain);
+      gain.connect(this.ctx.destination);
+      oscillator.start(start);
+      oscillator.stop(start + .36);
+    });
+  }
+
   // Uplifting victory harp
   playVictory() {
     if (this.muted) return;

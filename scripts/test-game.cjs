@@ -7,12 +7,12 @@ const assert = require('node:assert/strict');
 const compiler = {};
 vm.runInNewContext(fs.readFileSync(process.argv[2], 'utf8'), compiler);
 const root = path.resolve(__dirname, '..');
-const source = ['src/gameConfig.js', 'src/components/Artwork.jsx', 'src/components/CatchingGame.jsx']
+const source = ['src/gameConfig.js', 'src/utils/soundEngine.js', 'src/components/Artwork.jsx', 'src/components/CatchingGame.jsx']
   .map(file => fs.readFileSync(path.join(root, file), 'utf8').replace(/^import .*\n/gm, '').replace(/^export default /gm, '').replace(/^export /gm, '')).join('\n');
 const gameCode = compiler.Babel.transform(source, { presets: [['react', { runtime: 'classic' }]] }).code;
 
-function mount({ width = 800, height = 700, storageBlocked = false, level = 1, initialScore = 0, random = () => .5 } = {}) {
-  let nextFrame, now = 0, cleanup, result, renders = [], refs = [], effects = [], refIndex = 0;
+function mount({ width = 800, height = 700, storageBlocked = false, level = 1, initialScore = 0, random = () => .5, audioBlocked = false } = {}) {
+  let nextFrame, now = 0, cleanup, result, resultCount = 0, cancelledFrames = 0, renders = [], refs = [], effects = [], refIndex = 0;
   const listeners = new Map();
   const context = new Proxy({ measureText: text => ({ width: text.length * 6 }) }, { get: (target, key) => target[key] || (() => {}), set: (target, key, value) => { target[key] = value; return true; } });
   const canvas = { getContext: () => context, getBoundingClientRect: () => ({ width, height, left: 0 }) };
@@ -24,25 +24,24 @@ function mount({ width = 800, height = 700, storageBlocked = false, level = 1, i
   };
   const sandbox = {
     React: react, ...react, Math: Object.assign(Object.create(Math), { random }), Path2D: class { constructor(value) { this.path = value; } },
-    sound: new Proxy({}, { get: () => () => {} }),
     localStorage: { getItem: () => { if (storageBlocked) throw Error('blocked'); return '0'; }, setItem: () => { if (storageBlocked) throw Error('blocked'); } },
-    window: { devicePixelRatio: 2, addEventListener: (key, fn) => listeners.set(key, fn), removeEventListener: key => listeners.delete(key) },
+    window: { AudioContext: audioBlocked ? class { constructor() { throw Error('Audio blocked'); } } : undefined, devicePixelRatio: 2, addEventListener: (key, fn) => listeners.set(key, fn), removeEventListener: key => listeners.delete(key) },
     document: { hidden: false, addEventListener: (key, fn) => listeners.set(key, fn), removeEventListener: key => listeners.delete(key) },
-    requestAnimationFrame: fn => { nextFrame = fn; return 1; }, cancelAnimationFrame: () => { nextFrame = null; },
+    requestAnimationFrame: fn => { nextFrame = fn; return 1; }, cancelAnimationFrame: () => { cancelledFrames++; nextFrame = null; },
   };
   vm.createContext(sandbox); vm.runInContext(gameCode, sandbox);
-  const tree = sandbox.CatchingGame({ level, initialScore, onGameEnd: value => { result = value; }, onBackToIntro() {}, onToggleSound() {}, soundMuted: false });
+  const tree = sandbox.CatchingGame({ level, initialScore, onGameEnd: value => { result = value; resultCount++; }, onBackToIntro() {}, onToggleSound() {}, soundMuted: false });
   cleanup = effects[0]();
   const frame = dt => { now += dt * 1000; const fn = nextFrame; nextFrame = null; if (fn) fn(now); };
   frame(0);
-  return { state: refs[1].current, rules: vm.runInContext('RULES', sandbox), frame, advance(seconds, hz = 60) { for (let i = 0; i < Math.ceil(seconds * hz); i++) frame(1 / hz); }, get result() { return result; }, tree, refs, renders, listeners, cleanup };
+  return { resize(newWidth, newHeight = height) { width = newWidth; height = newHeight; listeners.get('resize')(); }, state: refs[1].current, rules: vm.runInContext('RULES', sandbox), frame, advance(seconds, hz = 60) { for (let i = 0; i < Math.ceil(seconds * hz); i++) frame(1 / hz); }, get result() { return result; }, get resultCount() { return resultCount; }, get pendingFrame() { return Boolean(nextFrame); }, get cancelledFrames() { return cancelledFrames; }, tree, refs, renders, listeners, cleanup };
 }
 
 const tests = [];
 function test(name, fn) { fn(); tests.push(name); }
 function positive(state, points = 15) { return { id: 'sunflower', points, color: '#edc575', x: state.player.x, y: state.player.y + 15, speed: 0, phase: 0 }; }
 
-test('30-second trigger clears all items and particles, waits, then drops from center', () => {
+test('30-second trigger clears all items and particles, waits, then spawns the final drop', () => {
   const g = mount(); g.state.countdown = 0; g.state.elapsed = 29.99;
   g.state.items = [positive(g.state)]; g.state.particles = [{ x: 1, y: 2, life: 1 }];
   g.frame(.02); assert.equal(g.state.finale, 'waiting'); assert.equal(g.state.items.length, 0); assert.equal(g.state.particles.length, 0);
@@ -59,11 +58,14 @@ test('catching the girl wins immediately and only once, even with blocked storag
   g.state.items = [{ ...positive(g.state), id: 'girl' }];
   g.frame(.016); assert.equal(g.result.status, 'win'); assert.equal(g.state.active, false); assert.equal(g.state.items.length, 0); g.frame(.016); assert.equal(g.result.status, 'win'); g.cleanup();
 });
-test('a missed final catch retries at center without losing a life', () => {
-  const g = mount(); g.state.countdown = 0; g.state.finale = 'falling';
-  g.state.items = [{ id: 'girl', x: 50, y: 800, speed: 100 }]; g.frame(.016);
-  assert.equal(g.state.finale, 'waiting'); assert.equal(g.state.lives, 3); g.advance(1.3);
-  assert.equal(g.state.items[0].x, 400); assert.equal(g.state.items.length, 1); g.cleanup();
+test('a missed final catch is terminal at the canvas bottom and preserves hearts and score', () => {
+  const g = mount({ initialScore: 650, level: 2 }); g.state.countdown = 0; g.state.finale = 'falling';
+  g.state.items = [{ id: 'girl', x: 50, y: 700, speed: 0 }]; g.frame(.016);
+  assert.equal(g.result, undefined); // Exactly at the boundary is not past it.
+  g.state.items[0].y = 700.1; g.frame(.016);
+  assert.equal(g.result.status, 'missed-catch'); assert.equal(g.result.finalScore, 650);
+  assert.equal(g.state.lives, 3); assert.equal(g.state.active, false); assert.equal(g.state.items.length, 0);
+  g.advance(2); assert.equal(g.result.status, 'missed-catch'); assert.equal(g.state.items.length, 0); g.cleanup();
 });
 test('three harmful catches end the game in defeat', () => {
   const g = mount(); g.state.countdown = 0;
@@ -110,21 +112,21 @@ test('keyboard and pointer input move the catcher within the field', () => {
   assert.ok(g.state.player.x <= 352 && g.state.player.x > 340); g.cleanup();
 });
 
-test('first-level positive catches spawn configured bubbles that expire in 1.6 seconds', () => {
+test('first-level catches display a configured narrator note for 2.4 seconds', () => {
   const g = mount(); g.state.countdown = 0; g.state.spawnTimer = 100;
   g.state.items = [positive(g.state)]; g.frame(.016);
-  assert.equal(g.state.bubbles.length, 1);
-  assert.equal(g.state.bubbles[0].text, 'You caught a little joy!');
-  g.advance(1); assert.equal(g.state.bubbles.length, 1);
-  g.advance(.7); assert.equal(g.state.bubbles.length, 0); g.cleanup();
+  assert.ok(g.state.narrator);
+  assert.equal(g.state.narrator.text, 'You caught a little joy!');
+  g.advance(2); assert.ok(g.state.narrator);
+  g.advance(.5); assert.equal(g.state.narrator, null); g.cleanup();
 });
-test('bubbles freeze on pause and never spawn on level 2 or later', () => {
+test('narrator notes freeze on pause and never spawn on level 2 or later', () => {
   const first = mount(); first.state.countdown = 0; first.state.items = [positive(first.state)]; first.frame(.016);
-  const age = first.state.bubbles[0].age; first.listeners.get('blur')(); first.advance(2);
-  assert.equal(first.state.bubbles[0].age, age); first.cleanup();
+  const age = first.state.narrator.age; first.listeners.get('blur')(); first.advance(2);
+  assert.equal(first.state.narrator.age, age); first.cleanup();
   for (const level of [2, 3, 10]) {
     const g = mount({ level }); g.state.countdown = 0; g.state.items = [positive(g.state)]; g.frame(.016);
-    assert.equal(g.state.bubbles.length, 0); assert.equal(g.state.score, 15); g.cleanup();
+    assert.equal(g.state.narrator, null); assert.equal(g.state.score, 15); g.cleanup();
   }
 });
 test('later levels spawn items faster, increase speed, and increase hazard probability', () => {
@@ -161,6 +163,78 @@ test('level 1 starts fast and each replay drastically tightens the pace', () => 
     assert.ok(games[i].state.spawnTimer / games[i - 1].state.spawnTimer < .65);
   }
   games.forEach(g => g.cleanup());
+});
+
+test('both real-engine defeat paths cancel RAF and deliver exactly one result despite blocked audio', () => {
+  for (const missed of [false, true]) {
+    const g = mount({ audioBlocked: true }); g.state.countdown = 0; g.state.spawnTimer = 100;
+    if (missed) { g.state.finale = 'falling'; g.state.items = [{ id: 'girl', x: 50, y: 701, speed: 0 }]; }
+    else { g.state.lives = 1; g.state.items = [{ ...positive(g.state, 0), id: 'cloud' }]; }
+    g.frame(.016);
+    assert.equal(g.result.status, missed ? 'missed-catch' : 'lose');
+    assert.equal(g.state.active, false); assert.equal(g.pendingFrame, false); assert.ok(g.cancelledFrames > 0);
+    g.advance(3); assert.equal(g.resultCount, 1); assert.equal(g.pendingFrame, false); g.cleanup();
+  }
+});
+test('zero and negative health terminate directly without needing another collision', () => {
+  for (const health of [0, -1]) {
+    const g = mount(); g.state.lives = health; g.frame(.016);
+    assert.equal(g.result.status, 'lose'); assert.equal(g.pendingFrame, false); g.cleanup();
+  }
+});
+test('rapid catches replace a single narrator note independently of player position', () => {
+  const g = mount(); g.state.countdown = 0; g.state.spawnTimer = 100;
+  g.state.player.x = 50; g.state.player.targetX = 50;
+  g.state.items = [positive(g.state)]; g.frame(.016);
+  const first = g.state.narrator; g.advance(.5);
+  g.state.player.x = 750; g.state.player.targetX = 750;
+  g.state.items = [positive(g.state)]; g.frame(.016);
+  const next = g.state.narrator;
+  assert.ok(next.id > first.id); assert.notEqual(next.text, first.text); assert.ok(next.age < .05);
+  assert.equal(Object.hasOwn(next, 'x'), false); assert.equal(Object.hasOwn(next, 'y'), false);
+  assert.equal(Array.isArray(next), false); // Exactly one card, never a stacking queue.
+  g.advance(2); assert.ok(g.state.narrator); g.advance(.5); assert.equal(g.state.narrator, null); g.cleanup();
+});
+test('the real sound engine defines the defeat effect used by both lose paths', () => {
+  const sandbox = { window: {} }; vm.createContext(sandbox); vm.runInContext(gameCode, sandbox);
+  assert.equal(vm.runInContext('typeof sound.playDefeat', sandbox), 'function');
+  assert.doesNotThrow(() => vm.runInContext('sound.playDefeat()', sandbox));
+});
+
+test('narrator notes clear before the finale and on terminal defeat', () => {
+  const g = mount(); g.state.countdown = 0; g.state.spawnTimer = 100;
+  g.state.items = [positive(g.state)]; g.frame(.016); assert.ok(g.state.narrator);
+  g.state.elapsed = 29.99; g.frame(.02); assert.equal(g.state.narrator, null); g.cleanup();
+  const defeat = mount(); defeat.state.countdown = 0; defeat.state.items = [positive(defeat.state)]; defeat.frame(.016);
+  assert.ok(defeat.state.narrator); defeat.state.lives = 0; defeat.frame(.016);
+  assert.equal(defeat.state.narrator, null); assert.equal(defeat.result.status, 'lose'); defeat.cleanup();
+});
+
+test('final-drop RNG covers both padded edges and the middle without cropping the sprite', () => {
+  for (const width of [60, 100, 320, 800, 1440]) {
+    const positions = [];
+    for (const fraction of [0, .25, .5, .75, .999999]) {
+      const g = mount({ width, random: () => fraction }); g.state.countdown = 0;
+      g.state.finale = 'waiting'; g.state.finaleTimer = g.rules.finalePause; g.frame(.016);
+      const girl = g.state.items[0];
+      const halfWidth = g.rules.finalCharacterHalfWidth * girl.scale;
+      assert.ok(girl.x - halfWidth >= 0); assert.ok(girl.x + halfWidth <= width);
+      assert.equal(girl.dropFraction, fraction); positions.push(girl.x); g.cleanup();
+    }
+    if (width >= 320) { assert.ok(positions[0] < width / 2); assert.ok(positions[4] > width / 2); }
+  }
+});
+test('resizing preserves the random drop fraction and keeps the final sprite within the new edges', () => {
+  const g = mount({ width: 800, random: () => .2 }); g.state.countdown = 0;
+  g.state.finale = 'waiting'; g.state.finaleTimer = g.rules.finalePause; g.frame(.016);
+  for (const width of [390, 100, 60, 1200]) {
+    g.resize(width); const girl = g.state.items[0];
+    const padding = Math.min(width / 2, g.rules.finalCharacterHalfWidth + g.rules.finalDropEdgePadding);
+    assert.ok(Math.abs(girl.x - (padding + .2 * Math.max(0, width - 2 * padding))) < .001);
+    assert.ok(girl.x - g.rules.finalCharacterHalfWidth * girl.scale >= 0);
+    assert.ok(girl.x + g.rules.finalCharacterHalfWidth * girl.scale <= width);
+  }
+  g.cleanup();
 });
 
 console.log(`${tests.length} game checks passed:\n${tests.map(name => `- ${name}`).join('\n')}`);
